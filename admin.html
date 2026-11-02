@@ -607,9 +607,13 @@ function renderItems(){
 function init(){
   if(mode()==="published"){
     el("pubBanner").classList.remove("hidden");
-    /* first visit to the published admin: start editing from what is live */
-    if(!getWorking().sims.length && !getWorking().lectures.length && seed()){
-      loadPublishedIntoEditor();
+    let started = false;
+    try{ started = localStorage.getItem("ars_work_started")==="1"; }catch(e){}
+    if(!started){
+      if(!getWorking().sims.length && !getWorking().lectures.length && seed()){
+        loadPublishedIntoEditor();
+      }
+      try{ localStorage.setItem("ars_work_started","1"); }catch(e){}
     }
   }
 
