@@ -9,16 +9,20 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/mhchem.min.js"></script>
+<script src="data.js"></script>
 <style>
   main{width:100%;max-width:920px;margin:0 auto;padding:22px 18px 44px}
-  .admintop{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .notice{background:var(--ink);color:var(--surface);border-radius:12px;padding:14px 16px;
+    font-size:13.5px;line-height:1.6;margin-bottom:16px}
+  .notice b{font-weight:800}
+  .admintop{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+  .modeline{font-size:12.5px;color:var(--muted);margin-bottom:14px}
   .tabs{display:inline-flex;background:var(--primary-soft);border:1px solid var(--border);border-radius:11px;padding:4px;gap:4px}
   .tab{border:none;background:transparent;font:inherit;font-weight:600;font-size:14px;color:var(--muted);
     padding:8px 18px;border-radius:8px;cursor:pointer;transition:.15s}
   .tab.on{background:var(--primary);color:var(--btn-ink)}
   .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .spacer{margin-left:auto}
-  .gcard .desc{margin:0}
   .steplabel{display:flex;align-items:center;gap:9px;margin:2px 0 12px;flex-wrap:wrap}
   .stepchip{width:24px;height:24px;border-radius:7px;background:var(--primary);color:var(--btn-ink);
     font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -26,14 +30,12 @@
   .steplabel .muted{font-size:12.5px}
   .cardhead{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
   .cardhead h3{margin:0;font-size:15.5px;font-weight:700;letter-spacing:-.01em}
-
   .qitem{align-items:flex-start}
   .qidx{width:28px;height:28px;border-radius:8px;background:var(--primary);color:var(--btn-ink);
     font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
   .qmain{flex:1;min-width:200px}
   .qthumb{max-height:56px;border-radius:8px;border:1px solid var(--border);flex-shrink:0}
   .qacts{display:flex;gap:6px;flex-shrink:0}
-
   .opt-row{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;background:var(--soft);
     border:1px solid var(--border);border-radius:12px;padding:12px}
   .opt-row input[type=radio]{width:18px;height:18px;margin-top:14px;flex-shrink:0;cursor:pointer}
@@ -52,7 +54,6 @@
     .letter{margin-top:8px}
     .opt-actions{flex-direction:row;width:100%;justify-content:flex-end}
   }
-
   .drivecard summary{cursor:pointer;font-weight:700;font-size:14px;display:flex;align-items:center;gap:9px;list-style:none}
   .drivecard summary::-webkit-details-marker{display:none}
   .drivecard summary .ic{width:17px;height:17px}
@@ -64,6 +65,12 @@
 </style>
 </head>
 <body>
+
+<div class="notice hidden" id="pubBanner">
+  <b>You are on the published site.</b> Students see the content inside <b>data.js</b>, not what is typed here.
+  Edit below, then click <b>Export for GitHub</b> and upload the downloaded data.js to your repository.
+  Your changes go live for every student right after that upload.
+</div>
 
 <header>
   <a class="brand" href="index.html">
@@ -99,25 +106,27 @@
       </div>
       <a class="btn small" href="index.html"><svg class="ic"><use href="#i-home"/></svg>View site</a>
     </div>
+    <p class="modeline" id="modeLine"></p>
 
     <!-- ================= SIMULATIONS ================= -->
     <section id="secSims">
-
       <div id="simList">
         <div class="toolbar">
           <button type="button" class="btn primary" id="newSimBtn"><svg class="ic"><use href="#i-plus"/></svg>New simulation</button>
-          <button type="button" class="btn" id="exportBtn"><svg class="ic"><use href="#i-download"/></svg>Export</button>
-          <button type="button" class="btn" id="importBtn"><svg class="ic"><use href="#i-upload"/></svg>Import</button>
-          <button type="button" class="btn" id="exportSiteBtn"><svg class="ic"><use href="#i-download"/></svg>Export for GitHub</button>
+          <button type="button" class="btn primary" id="exportSiteBtn"><svg class="ic"><use href="#i-download"/></svg>Export for GitHub</button>
+          <button type="button" class="btn" id="loadPubBtn"><svg class="ic"><use href="#i-upload"/></svg>Load published into editor</button>
+          <button type="button" class="btn" id="exportBtn"><svg class="ic"><use href="#i-download"/></svg>Backup</button>
+          <button type="button" class="btn" id="importBtn"><svg class="ic"><use href="#i-upload"/></svg>Restore</button>
           <input type="file" id="importFile" accept=".json" hidden>
         </div>
         <div class="grid" id="simGrid"></div>
         <div class="card" style="margin-top:16px">
           <div class="cardhead">
-            <h3>Recent attempts</h3>
-            <button type="button" class="btn small danger spacer" id="clearAllAtt" title="Delete every attempt">
-              <svg class="ic"><use href="#i-trash"/></svg>Clear all attempts</button>
+            <h3>Attempts in this browser</h3>
+            <button type="button" class="btn small danger spacer" id="clearAllAtt">
+              <svg class="ic"><use href="#i-trash"/></svg>Clear all</button>
           </div>
+          <p class="small muted" style="margin:0 0 8px">Attempts are saved in each student's own browser. This list shows only attempts made in this browser.</p>
           <div id="recentList"></div>
         </div>
       </div>
@@ -176,7 +185,7 @@
           <button type="button" class="btn small" id="addOptBtn"><svg class="ic"><use href="#i-plus"/></svg>Add option</button>
 
           <label class="field">Explanation (shown to students who answer wrong)</label>
-          <textarea id="qExpl" class="tall" placeholder="Explain the solution or the answer key. The box grows as you type."></textarea>
+          <textarea id="qExpl" class="tall" placeholder="Explain the solution or the answer key."></textarea>
           <div class="preview hidden" id="qExplPrev"></div>
 
           <label class="field">Points</label>
@@ -194,8 +203,8 @@
         <div class="card">
           <div class="cardhead">
             <h3>Attempts for this simulation</h3>
-            <button type="button" class="btn small danger spacer" id="clearSimAtt" title="Delete all attempts of this simulation">
-              <svg class="ic"><use href="#i-trash"/></svg>Clear these attempts</button>
+            <button type="button" class="btn small danger spacer" id="clearSimAtt">
+              <svg class="ic"><use href="#i-trash"/></svg>Clear these</button>
           </div>
           <div id="simAtt"></div>
         </div>
@@ -204,11 +213,10 @@
 
     <!-- ================= LECTURE NOTES ================= -->
     <section id="secLect" class="hidden">
-
       <div id="lecList">
         <details class="card drivecard">
           <summary><svg class="ic"><use href="#i-folder"/></svg>Optional: Google Drive folder link</summary>
-          <p class="small muted" style="margin:6px 0 10px">If all of your documents already sit in one Google Drive folder, paste the share link of that folder here and students get a single Open folder button at the top of the lecture page. This is only a shortcut. Adding materials one by one in the sections below gives students a much nicer organized page, so most of the time you can skip this.</p>
+          <p class="small muted" style="margin:6px 0 10px">If all of your documents already sit in one Google Drive folder, paste the share link here and students get a single Open folder button on the lecture page. This is only a shortcut; adding materials section by section below gives a much nicer page.</p>
           <div class="row">
             <input type="text" id="driveUrl" placeholder="Paste the share link of your Drive folder (optional)" style="max-width:420px">
             <button type="button" class="btn primary small" id="saveDrive"><svg class="ic"><use href="#i-check"/></svg>Save</button>
@@ -246,7 +254,7 @@
           <input type="text" id="itTitle" placeholder="For example Chapter 1 summary">
           <label class="field">Google Drive link</label>
           <input type="text" id="itUrl" placeholder="Paste the Drive share link of the document">
-          <p class="small muted" style="margin:6px 0 0">How to get the link: in Google Drive, right click the document, choose Share, set General access to <b>Anyone with the link</b> (Viewer), then copy the link and paste it here. Documents shared this way open right inside the lecture page.</p>
+          <p class="small muted" style="margin:6px 0 0">In Google Drive: right click the document, Share, set General access to <b>Anyone with the link</b> (Viewer), copy the link, paste it here.</p>
           <div style="margin-top:14px"><button type="button" class="btn primary" id="addItemBtn"><svg class="ic"><use href="#i-plus"/></svg>Add material</button></div>
         </div>
       </div>
@@ -256,22 +264,18 @@
 
 <script src="app.js"></script>
 <script>
-const { el, esc, wire, icon, texToHtml, loadDB, saveDB } = ARS;
-const ADMIN_PASSWORD = "admin123";   /* change this before publishing */
+const { el, esc, wire, icon, texToHtml,
+        getContent, mode, getWorking, saveWorking, loadPublishedIntoEditor, seed,
+        getAttempts, deleteAttemptsWhere, clearAttemptsWhere, buildDataJS } = ARS;
+const ADMIN_PASSWORD = "admin123";   /* change this */
 
-let db = loadDB();
 let view = "sims";
 let curSim = null, curSec = null;
 let editingId = null, formOptions = [], formCorrect = -1, formImage = null;
 
-function commit(mutate){
-  const fresh = loadDB();
-  mutate(fresh);
-  if(saveDB(fresh)){ db = fresh; }
-  return db;
-}
-function reSim(){ curSim = curSim ? db.sims.find(x=>x.id===curSim.id) : null; }
-function reSec(){ curSec = curSec ? db.lectures.find(x=>x.id===curSec.id) : null; }
+function w(){ return getWorking(); }
+function reSim(){ curSim = curSim ? w().sims.find(x=>x.id===curSim.id) : null; }
+function reSec(){ curSec = curSec ? w().lectures.find(x=>x.id===curSec.id) : null; }
 
 function setPrev(div, text){
   div.innerHTML = texToHtml(text);
@@ -313,6 +317,12 @@ function chev(dir){
     + (dir==="up" ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>')
     + '</svg>';
 }
+function refreshModeLine(){
+  const s = seed(), wk = w();
+  el("modeLine").innerHTML = (mode()==="published" ? "Published (data.js): " : "data.js in folder: ")
+    + "<b>"+(s?s.sims.length:0)+"</b> simulations · <b>"+(s?s.lectures.length:0)+"</b> sections"
+    + " &nbsp;·&nbsp; Working copy: <b>"+wk.sims.length+"</b> simulations · <b>"+wk.lectures.length+"</b> sections";
+}
 
 function showTab(t){
   view = t;
@@ -320,7 +330,6 @@ function showTab(t){
   el("tabLect").classList.toggle("on", t==="lect");
   el("secSims").classList.toggle("hidden", t!=="sims");
   el("secLect").classList.toggle("hidden", t!=="lect");
-  db = loadDB();
   if(t==="sims") renderSims(); else renderLects();
 }
 
@@ -335,30 +344,13 @@ function attemptRow(a, opts){
     + (opts.showSim?' <span class="muted small">in '+esc(a.simTitle||"")+'</span>':'')+'</span>'
     + '<span class="row" style="gap:10px"><span class="pill">'+a.score+'/'+a.max+'</span>'
     + '<span class="muted small">'+new Date(a.date).toLocaleString()+'</span>'
-    + (opts.onDelete?'<button type="button" class="btn small danger" data-tdel title="Delete this attempt">'+icon("trash")+'</button>':'')
-    + '</span>';
-  if(opts.onDelete){ d.querySelector("[data-tdel]").onclick = ()=>opts.onDelete(a); }
+    + '<button type="button" class="btn small danger" data-tdel title="Delete this attempt">'+icon("trash")+'</button></span>';
+  d.querySelector("[data-tdel]").onclick = ()=>{
+    if(!confirm("Delete this attempt by "+a.name+"?")) return;
+    deleteAttemptsWhere(x=>sameAttempt(x,a));
+    refreshAttemptViews();
+  };
   return d;
-}
-function deleteAttempt(a){
-  if(!confirm("Delete this attempt by "+a.name+"? This cannot be undone.")) return;
-  commit(f=>{ f.attempts = f.attempts.filter(x=>!sameAttempt(x,a)); });
-  refreshAttemptViews();
-}
-function clearSimAttempts(){
-  if(!curSim) return;
-  const n = db.attempts.filter(x=>x.simId===curSim.id).length;
-  if(!n){ alert("There are no attempts to delete for this simulation."); return; }
-  if(!confirm("Delete all "+n+" attempt(s) for this simulation? This cannot be undone.")) return;
-  commit(f=>{ f.attempts = f.attempts.filter(x=>x.simId!==curSim.id); });
-  refreshAttemptViews();
-}
-function clearAllAttempts(){
-  const n = db.attempts.length;
-  if(!n){ alert("There are no attempts to delete."); return; }
-  if(!confirm("Delete all "+n+" attempt(s) across every simulation? This cannot be undone.")) return;
-  commit(f=>{ f.attempts = []; });
-  refreshAttemptViews();
 }
 function refreshAttemptViews(){
   if(view!=="sims") return;
@@ -371,52 +363,51 @@ function simMeta(s){
   return s.questions.length+" questions · "+pts+" points"+(s.durationMin>0?" · "+s.durationMin+" min":"");
 }
 function renderSimGrid(){
+  const db = w();
   const grid = el("simGrid"); grid.innerHTML = "";
   if(!db.sims.length){
     grid.innerHTML = '<div class="empty">No simulations yet. Click "New simulation" to create the first one.</div>';
   }
   db.sims.forEach(s=>{
-    const n = db.attempts.filter(a=>a.simId===s.id).length;
+    const n = getAttempts().filter(a=>a.simId===s.id).length;
     const d = document.createElement("div"); d.className = "gcard";
     d.innerHTML = '<div class="chead"><div><b>'+texToHtml(s.title)+'</b><div class="small muted">'+simMeta(s)+'</div></div></div>'
-      + (s.desc ? '<p class="small muted desc">'+texToHtml(s.desc)+'</p>' : '')
+      + (s.desc ? '<p class="small muted">'+texToHtml(s.desc)+'</p>' : '')
       + '<div class="row" style="margin-top:auto">'
       + '<button type="button" class="btn small primary" data-open>'+icon("edit")+'Open builder</button>'
       + '<button type="button" class="btn small danger" data-del>'+icon("trash")+'</button>'
       + '<span class="pill spacer">'+n+' attempt'+(n===1?"":"s")+'</span></div>';
     d.querySelector("[data-open]").onclick = ()=>openSim(s.id);
     d.querySelector("[data-del]").onclick = ()=>{
-      if(confirm("Delete this simulation and its questions? Attempts will be kept.")){
-        commit(f=>{ f.sims = f.sims.filter(x=>x.id!==s.id); });
-        renderSimGrid(); renderRecent();
+      if(confirm("Delete this simulation and its questions?")){
+        saveWorking(f=>{ f.sims = f.sims.filter(x=>x.id!==s.id); });
+        renderSimGrid(); refreshModeLine();
       }
     };
     grid.appendChild(d);
   });
 }
 function renderRecent(){
-  el("clearAllAtt").disabled = db.attempts.length===0;
+  const att = getAttempts();
+  el("clearAllAtt").disabled = att.length===0;
   const rec = el("recentList"); rec.innerHTML = "";
-  if(!db.attempts.length){
-    rec.innerHTML = '<div class="empty">No attempts yet. Results appear here after students submit.</div>';
+  if(!att.length){
+    rec.innerHTML = '<div class="empty">No attempts yet.</div>';
     return;
   }
-  [...db.attempts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6)
-    .forEach(a=>rec.appendChild(attemptRow(a,{showSim:true,onDelete:deleteAttempt})));
+  [...att].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8)
+    .forEach(a=>rec.appendChild(attemptRow(a,{showSim:true})));
 }
 function renderSims(){
   el("simList").classList.remove("hidden");
   el("simBuilder").classList.add("hidden");
   curSim = null;
-  renderSimGrid(); renderRecent();
+  renderSimGrid(); renderRecent(); refreshModeLine();
 }
 
 function openSim(id){
-  curSim = db.sims.find(x=>x.id===id);
+  curSim = w().sims.find(x=>x.id===id);
   if(!curSim) return;
-  showSim();
-}
-function showSim(){
   el("simList").classList.add("hidden");
   el("simBuilder").classList.remove("hidden");
   el("sbTitle").value = curSim.title;
@@ -453,7 +444,7 @@ function renderQList(){
     d.querySelector("[data-edit]").onclick = ()=>openEditor(q.id);
     d.querySelector("[data-del]").onclick = ()=>{
       if(confirm("Delete this question?")){
-        commit(f=>{
+        saveWorking(f=>{
           const s = f.sims.find(x=>x.id===curSim.id);
           if(s) s.questions = s.questions.filter(x=>x.id!==q.id);
         });
@@ -466,7 +457,7 @@ function renderQList(){
 function moveQ(i, dir){
   const j = i+dir;
   if(j<0 || j>=curSim.questions.length) return;
-  commit(f=>{
+  saveWorking(f=>{
     const s = f.sims.find(x=>x.id===curSim.id);
     if(!s) return;
     const q = s.questions.splice(i,1)[0];
@@ -476,12 +467,12 @@ function moveQ(i, dir){
 }
 function renderSimAtt(){
   const box = el("simAtt");
-  const list = db.attempts.filter(a=>a.simId===curSim.id);
+  const list = getAttempts().filter(a=>a.simId===curSim.id);
   el("clearSimAtt").disabled = list.length===0;
   if(!list.length){ box.innerHTML = '<div class="empty">No attempts for this simulation yet.</div>'; return; }
   box.innerHTML = "";
   [...list].sort((a,b)=>new Date(b.date)-new Date(a.date))
-    .forEach(a=>box.appendChild(attemptRow(a,{showSim:false,onDelete:deleteAttempt})));
+    .forEach(a=>box.appendChild(attemptRow(a,{showSim:false})));
 }
 
 function openEditor(id){
@@ -550,35 +541,31 @@ function renderLects(){
   el("lecList").classList.remove("hidden");
   el("secBuilder").classList.add("hidden");
   curSec = null;
-  el("driveUrl").value = db.driveUrl||"";
+  el("driveUrl").value = w().driveUrl||"";
   const grid = el("secGrid"); grid.innerHTML = "";
-  if(!db.lectures.length){
+  if(!w().lectures.length){
     grid.innerHTML = '<div class="empty">No sections yet. Click "New section" to create the first one.</div>';
   }
-  db.lectures.forEach(s=>{
+  w().lectures.forEach(s=>{
     const d = document.createElement("div"); d.className = "gcard";
     d.innerHTML = '<div class="chead"><div><b>'+texToHtml(s.title)+'</b><div class="small muted">'+s.items.length+' material'+(s.items.length===1?"":"s")+'</div></div></div>'
-      + (s.desc ? '<p class="small muted desc">'+texToHtml(s.desc)+'</p>' : '')
+      + (s.desc ? '<p class="small muted">'+texToHtml(s.desc)+'</p>' : '')
       + '<div class="row" style="margin-top:auto">'
       + '<button type="button" class="btn small primary" data-open>'+icon("edit")+'Open</button>'
       + '<button type="button" class="btn small danger" data-del>'+icon("trash")+'</button></div>';
     d.querySelector("[data-open]").onclick = ()=>openSec(s.id);
     d.querySelector("[data-del]").onclick = ()=>{
       if(confirm("Delete this section and all its materials?")){
-        commit(f=>{ f.lectures = f.lectures.filter(x=>x.id!==s.id); });
-        renderLects();
+        saveWorking(f=>{ f.lectures = f.lectures.filter(x=>x.id!==s.id); });
+        renderLects(); refreshModeLine();
       }
     };
     grid.appendChild(d);
   });
 }
-
 function openSec(id){
-  curSec = db.lectures.find(x=>x.id===id);
+  curSec = w().lectures.find(x=>x.id===id);
   if(!curSec) return;
-  showSec();
-}
-function showSec(){
   el("lecList").classList.add("hidden");
   el("secBuilder").classList.remove("hidden");
   el("secTitle").value = curSec.title;
@@ -606,7 +593,7 @@ function renderItems(){
       + '<button type="button" class="btn small danger" data-del>'+icon("trash")+'</button>';
     d.querySelector("[data-del]").onclick = ()=>{
       if(confirm("Remove this material?")){
-        commit(f=>{
+        saveWorking(f=>{
           const s = f.lectures.find(x=>x.id===curSec.id);
           if(s) s.items = s.items.filter(x=>x.id!==it.id);
         });
@@ -618,6 +605,14 @@ function renderItems(){
 }
 
 function init(){
+  if(mode()==="published"){
+    el("pubBanner").classList.remove("hidden");
+    /* first visit to the published admin: start editing from what is live */
+    if(!getWorking().sims.length && !getWorking().lectures.length && seed()){
+      loadPublishedIntoEditor();
+    }
+  }
+
   wire("admLoginBtn","click",()=>{
     if(el("admPass").value===ADMIN_PASSWORD){
       el("adminLogin").classList.add("hidden");
@@ -631,29 +626,35 @@ function init(){
   wire("tabSims","click",()=>showTab("sims"));
   wire("tabLect","click",()=>showTab("lect"));
 
-  wire("clearAllAtt","click",clearAllAttempts);
-  wire("clearSimAtt","click",clearSimAttempts);
+  wire("clearAllAtt","click",()=>{
+    if(confirm("Delete all attempts stored in this browser?")){
+      clearAttemptsWhere(null); renderRecent(); renderSimGrid();
+    }
+  });
+  wire("clearSimAtt","click",()=>{
+    if(!curSim) return;
+    if(confirm("Delete all attempts for this simulation stored in this browser?")){
+      clearAttemptsWhere(a=>a.simId===curSim.id); renderRecent(); renderSimAtt(); renderSimGrid();
+    }
+  });
 
   wire("newSimBtn","click",()=>{
-    let nid = null;
-    commit(f=>{
-      const s = { id:Date.now(), title:"Untitled simulation", desc:"", durationMin:0, questions:[] };
-      f.sims.push(s); nid = s.id;
-    });
-    curSim = db.sims.find(x=>x.id===nid);
-    if(curSim) showSim();
+    const s = { id:Date.now(), title:"Untitled simulation", desc:"", durationMin:0, questions:[] };
+    saveWorking(f=>{ f.sims.push(s); });
+    curSim = w().sims.find(x=>x.id===s.id);
+    if(curSim) openSim(s.id);
   });
   wire("backSims","click",()=>renderSims());
   wire("sbSave","click",()=>{
     if(!curSim) return;
-    commit(f=>{
+    saveWorking(f=>{
       const s = f.sims.find(x=>x.id===curSim.id);
       if(!s) return;
       s.title = el("sbTitle").value.trim()||"Untitled simulation";
       s.desc = el("sbDesc").value.trim();
       s.durationMin = Math.max(0, parseInt(el("sbDur").value)||0);
     });
-    reSim(); renderQList(); renderSimAtt();
+    reSim(); renderQList();
   });
   wire("addQBtn","click",()=>openEditor(null));
   wire("addOptBtn","click",()=>{
@@ -679,7 +680,7 @@ function init(){
       options: formOptions.map(o=>({text:o.text, image:o.image})),
       correctIndex: formCorrect, explanation: el("qExpl").value,
       points: Math.max(0, parseInt(el("qPoints").value)||1) };
-    commit(f=>{
+    saveWorking(f=>{
       const s = f.sims.find(x=>x.id===curSim.id);
       if(!s) return;
       if(editingId){
@@ -693,17 +694,24 @@ function init(){
   });
   wire("cancelQBtn","click",closeEditor);
   wire("exportBtn","click",()=>{
-    const blob = new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+    const blob = new Blob([JSON.stringify(w(),null,2)],{type:"application/json"});
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = "ars_atomie_export.json"; a.click();
+    a.href = URL.createObjectURL(blob); a.download = "ars_atomie_backup.json"; a.click();
   });
   wire("exportSiteBtn","click",()=>{
-    const seed = { sims: db.sims, lectures: db.lectures, driveUrl: db.driveUrl||"" };
-    const content = "/* Ars Atomie published content. Replace this file on GitHub to update the site. */\n"
-      + "window.ARS_SEED = " + JSON.stringify(seed, null, 2) + ";\n";
-    const blob = new Blob([content],{type:"application/javascript"});
+    const wk = getWorking();
+    if(!wk.sims.length && !wk.lectures.length &&
+       !confirm("Your working copy is empty. Publishing this will make the live site empty. Continue?")) return;
+    const blob = new Blob([buildDataJS()],{type:"application/javascript"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob); a.download = "data.js"; a.click();
+    alert("data.js downloaded.\n\nNow: open your GitHub repository, click Add file, upload this data.js (replace the old one), and commit. The live site updates about a minute later.");
+  });
+  wire("loadPubBtn","click",()=>{
+    if(!seed()){ alert("No published data.js was found on this site."); return; }
+    if(confirm("Replace your working copy with the currently published content?")){
+      if(loadPublishedIntoEditor()){ renderSims(); }
+    }
   });
   wire("importBtn","click",()=>el("importFile").click());
   wire("importFile","change",e=>{
@@ -712,38 +720,37 @@ function init(){
     r.onload = ()=>{
       try{
         const obj = JSON.parse(r.result);
-        if(!obj || !Array.isArray(obj.sims)) throw 0;
-        if(!confirm("Replace everything with the imported file?")) return;
-        commit(f=>{
-          f.sims = (obj.sims||[]).map(s=>Object.assign({},s,{questions:s.questions||[]}));
-          f.lectures = (obj.lectures||[]).map(s=>Object.assign({},s,{items:s.items||[]}));
-          f.attempts = obj.attempts||[]; f.driveUrl = obj.driveUrl||"";
+        if(!obj || (!Array.isArray(obj.sims) && !Array.isArray(obj.questions))) throw 0;
+        if(!confirm("Replace your working copy with this backup?")) return;
+        saveWorking(f=>{
+          if(Array.isArray(obj.sims)){
+            f.sims = obj.sims; f.lectures = obj.lectures||[]; f.driveUrl = obj.driveUrl||"";
+          }else{
+            f.sims = [{ id:1, title:obj.title||"Olympiad Simulation", desc:"", durationMin:obj.durationMin||0, questions:obj.questions }];
+          }
         });
         showTab(view);
-      }catch(err){ alert("Invalid file."); }
+      }catch(err){ alert("Invalid backup file."); }
     };
     r.readAsText(f); e.target.value = "";
   });
 
   wire("saveDrive","click",()=>{
-    commit(f=>{ f.driveUrl = el("driveUrl").value.trim(); });
+    saveWorking(f=>{ f.driveUrl = el("driveUrl").value.trim(); });
     const b = el("saveDrive");
     b.textContent = "Saved";
     setTimeout(()=>{ b.innerHTML = icon("check")+"Save"; }, 1300);
   });
   wire("newSecBtn","click",()=>{
-    let nid = null;
-    commit(f=>{
-      const s = { id:Date.now(), title:"Untitled section", desc:"", items:[] };
-      f.lectures.push(s); nid = s.id;
-    });
-    curSec = db.lectures.find(x=>x.id===nid);
-    if(curSec) showSec();
+    const s = { id:Date.now(), title:"Untitled section", desc:"", items:[] };
+    saveWorking(f=>{ f.lectures.push(s); });
+    curSec = w().lectures.find(x=>x.id===s.id);
+    if(curSec) openSec(s.id);
   });
   wire("backLect","click",()=>renderLects());
   wire("secSave","click",()=>{
     if(!curSec) return;
-    commit(f=>{
+    saveWorking(f=>{
       const s = f.lectures.find(x=>x.id===curSec.id);
       if(!s) return;
       s.title = el("secTitle").value.trim()||"Untitled section";
@@ -757,7 +764,7 @@ function init(){
     if(!title){ alert("Give the material a title."); return; }
     const url = el("itUrl").value.trim();
     if(!url){ alert("Paste the Google Drive link first."); return; }
-    commit(f=>{
+    saveWorking(f=>{
       const s = f.lectures.find(x=>x.id===curSec.id);
       if(s) s.items.push({ id:Date.now(), title, type:"link", url });
     });

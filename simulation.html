@@ -9,13 +9,13 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/mhchem.min.js"></script>
+<script src="data.js"></script>
 <style>
   main{width:100%;max-width:820px;margin:0 auto;padding:26px 18px 44px}
   .pagehead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
   .pagetitle{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
   .pagesub{color:var(--muted);margin:0;font-size:14px}
   .spacer{margin-left:auto}
-
   #timer{font-weight:700;color:var(--btn-ink);background:var(--primary);
     padding:5px 14px;border-radius:99px;font-size:13.5px;display:inline-flex;align-items:center;gap:5px}
   .prog{height:8px;background:var(--track);border-radius:99px;overflow:hidden;margin:12px 0 16px}
@@ -35,7 +35,6 @@
   .dot:hover{border-color:var(--ink);color:var(--ink)}
   .dot.done{background:var(--primary);color:var(--btn-ink);border-color:var(--primary);font-weight:700}
   .dot.cur{outline:2px solid var(--primary);outline-offset:2px}
-
   .scoreband{background:var(--primary-soft);border:1px solid var(--border);
     border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:16px}
   #scoreBig{font-size:46px;font-weight:800;letter-spacing:-.03em}
@@ -66,7 +65,6 @@
 </header>
 
 <main>
-  <!-- list -->
   <div id="listView">
     <div class="pagehead">
       <div>
@@ -79,7 +77,6 @@
     <div class="grid" id="simGrid"></div>
   </div>
 
-  <!-- name entry -->
   <div class="card hidden" id="startCard" style="text-align:center;padding:32px 22px">
     <span class="kicker">Ready</span>
     <h2 id="stTitle" style="margin:8px 0 4px;font-size:22px;font-weight:800;letter-spacing:-.02em"></h2>
@@ -94,7 +91,6 @@
     </div>
   </div>
 
-  <!-- runner -->
   <div class="card hidden" id="runView">
     <div class="row" style="justify-content:space-between">
       <div class="row" style="gap:10px">
@@ -114,7 +110,6 @@
     </div>
   </div>
 
-  <!-- results -->
   <div class="hidden" id="resView">
     <div class="scoreband">
       <span class="kicker" id="resSim"></span>
@@ -140,10 +135,8 @@
 
 <script src="app.js"></script>
 <script>
-const { el, esc, wire, icon, texToHtml, loadDB, saveDB } = ARS;
-const DATA_KEY = "ars_atomie_v2";
+const { el, esc, wire, icon, texToHtml, getContent, saveAttempt, getAttempts } = ARS;
 
-let db = loadDB();
 let sim = null, quiz = null, timerInt = null;
 let reviewAll = false, lastScore = 0, lastMax = 0, lastName = "";
 
@@ -158,19 +151,17 @@ function showOnly(id){
 function renderList(){
   sim=null; quiz=null;
   if(timerInt){ clearInterval(timerInt); timerInt=null; el("timer").classList.add("hidden"); }
-  db = loadDB();
+  const db = getContent();
   const grid = el("simGrid"); grid.innerHTML = "";
   if(!db.sims.length){
     grid.innerHTML = '<div class="empty">No simulations yet. Please check back later.</div>';
   }
   db.sims.forEach(s=>{
-    const n = db.attempts.filter(a=>a.simId===s.id).length;
     const d = document.createElement("div"); d.className = "gcard";
     d.innerHTML = '<div class="chead"><div><b>'+texToHtml(s.title)+'</b><div class="small muted">'+simMeta(s)+'</div></div></div>'
       + (s.desc ? '<p class="small muted">'+texToHtml(s.desc)+'</p>' : '')
       + '<div class="row" style="margin-top:auto">'
-      + '<button type="button" class="btn small primary" data-go>'+icon("play")+'Start</button>'
-      + '<span class="pill spacer">'+n+' attempt'+(n===1?"":"s")+'</span></div>';
+      + '<button type="button" class="btn small primary" data-go>'+icon("play")+'Start</button></div>';
     d.querySelector("[data-go]").onclick = ()=>showStart(s);
     grid.appendChild(d);
   });
@@ -180,7 +171,7 @@ function showStart(s){
   sim = s;
   el("stTitle").innerHTML = texToHtml(s.title);
   el("stMeta").textContent = simMeta(s);
-  el("stName").value = lastName;
+  el("stName").value = "";
   showOnly("startCard");
 }
 function startQuiz(){
@@ -234,11 +225,8 @@ function finishQuiz(){
   quiz.finished = true;
   let score=0, max=0;
   sim.questions.forEach((q,i)=>{ max+=q.points; if(quiz.chosen[i]===q.correctIndex) score+=q.points; });
-  const fresh = loadDB();
-  fresh.attempts.push({ simId:sim.id, simTitle:sim.title, name:quiz.name, score, max,
-                        date:new Date().toISOString(), answers:quiz.chosen.slice() });
-  saveDB(fresh);
-  db = fresh;
+  saveAttempt({ simId:sim.id, simTitle:sim.title, name:quiz.name, score, max,
+                date:new Date().toISOString(), answers:quiz.chosen.slice() });
   renderResults(score,max);
 }
 function optContent(q,i){
@@ -292,18 +280,6 @@ function init(){
   });
   wire("keyToggle","change",e=>{ reviewAll = e.target.checked; renderResults(lastScore,lastMax); });
   wire("retakeBtn","click",()=>showStart(sim));
-
-  window.addEventListener("storage", e=>{
-    if(e.key!==DATA_KEY && e.key!==null) return;
-    if(el("listView").classList.contains("hidden")) return;
-    renderList();
-  });
-  document.addEventListener("visibilitychange", ()=>{
-    if(document.hidden) return;
-    if(el("listView").classList.contains("hidden")) return;
-    renderList();
-  });
-
   renderList();
 }
 if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); }
