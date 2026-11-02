@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chemistry Olympiad Practice</title>
+<title>Ars Atomie · Chemistry Olympiad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -23,10 +23,10 @@
   .cols h3{margin:0 0 6px;font-size:15.5px;font-weight:700}
   .cols p{margin:0;font-size:14px;color:var(--muted);line-height:1.7}
 
-  .topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
-  .topic{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
-  .topic b{display:block;font-size:15px;margin-bottom:5px;letter-spacing:-.01em}
-  .topic p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.65}
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+  .field{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+  .field b{display:block;font-size:15px;margin-bottom:5px;letter-spacing:-.01em}
+  .field p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.65}
 
   .steps{display:flex;flex-direction:column;gap:0}
   .step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
@@ -60,12 +60,12 @@
 <body>
 
 <header>
-  <span class="bt" style="padding:4px 0">
-    <span class="brand-name" style="font-weight:800;font-size:16px;letter-spacing:-.02em">Chemistry Olympiad</span>
-    <span class="brand-sub">Practice and Preparation</span>
-  </span>
+  <a class="brand" href="index.html">
+    <span class="mark"><svg class="ic"><use href="#i-logo"/></svg></span>
+    <span class="bt"><span class="brand-name">Ars Atomie</span><span class="brand-sub">Chemistry Olympiad</span></span>
+  </a>
   <nav class="nav">
-    <a class="navlink cur" href="index.html">About</a>
+    <a class="navlink cur" href="index.html">Home</a>
     <a class="navlink" href="simulation.html">Simulations</a>
     <a class="navlink" href="lecture.html">Lecture notes</a>
   </nav>
@@ -76,20 +76,20 @@
   <div class="hero">
     <span class="kicker">Student Guide</span>
     <h1>Prepare for the Chemistry Olympiad</h1>
-    <p>This site trains you for chemistry olympiad competitions. Read the lecture notes your teacher published, then practice with timed simulations that mirror the contest format. Every question you miss comes with the correct answer and a full explanation, so each attempt teaches you something new.</p>
+    <p>This platform trains you for chemistry olympiad competitions. Study the lecture notes published by your teacher, then test yourself with timed simulations built to match the contest format. Every question you miss comes with the correct answer and a worked explanation, so each attempt leaves you better prepared than the last.</p>
   </div>
 
   <section>
-    <h2>What is the chemistry olympiad?</h2>
-    <p class="lead">The chemistry olympiad is a competitive exam that goes far beyond the school syllabus. Instead of recalling definitions, you apply chemical principles to unfamiliar problems, often under strict time pressure.</p>
+    <h2>About the competition</h2>
+    <p class="lead">A chemistry olympiad is not a school test with harder numbers. It asks you to combine concepts, read carefully, and reason through problems you have never seen before, usually against a strict clock.</p>
     <div class="cols">
       <div>
         <h3>What makes it different</h3>
-        <p>Questions are multi step and combine several ideas at once: a single problem might require balancing an equation, converting units, and reasoning about equilibrium in sequence. Depth matters more than coverage, and careful reading is rewarded as much as calculation.</p>
+        <p>Olympiad questions are layered. A single problem can demand balancing an equation, converting units, and reasoning about a reaction's behavior in sequence. Memorization alone will not carry you; understanding why reactions behave the way they do will.</p>
       </div>
       <div>
         <h3>What the exam looks like</h3>
-        <p>Most rounds are multiple choice or short structured questions with a tight time limit. You will work with chemical formulas, equations, and data from experiments, which is exactly what the simulations here train: pacing, precision, and checking your work before submitting.</p>
+        <p>Expect multiple choice and structured questions covering the major fields of chemistry, with formulas, equations, and experimental data presented the way they appear in real scientific work. Time management is a scored skill, which is why every simulation here can run with a live countdown.</p>
       </div>
     </div>
   </section>
@@ -97,38 +97,36 @@
   <hr class="rule">
 
   <section>
-    <h2>Core topics to master</h2>
-    <p class="lead">The question bank on this site focuses on the areas most olympiad exams test first:</p>
-    <div class="topics">
-      <div class="topic"><b>Stoichiometry</b><p>Mole calculations, limiting reagents, percent yield, and solution concentrations. The mechanical backbone of nearly every problem.</p></div>
-      <div class="topic"><b>Atomic structure</b><p>Electron configuration, quantum numbers, and periodic trends in radius, ionization energy, and electronegativity.</p></div>
-      <div class="topic"><b>Chemical bonding</b><p>Ionic and covalent bonding, Lewis structures, molecular geometry, and polarity.</p></div>
-      <div class="topic"><b>Equilibrium and kinetics</b><p>Equilibrium constants, Le Chatelier's principle, reaction rates, and energy diagrams.</p></div>
-      <div class="topic"><b>Acids and bases</b><p>pH calculations, buffers, titrations, and strength of acids and bases.</p></div>
-      <div class="topic"><b>Redox and electrochemistry</b><p>Oxidation states, balancing redox reactions, and electrochemical cells.</p></div>
+    <h2>The four major fields of chemistry</h2>
+    <p class="lead">Olympiad content draws from the four classical branches of the science. A strong competitor is comfortable moving between all of them, because real problems rarely stay inside one field.</p>
+    <div class="fields">
+      <div class="field"><b>Physical chemistry</b><p>The why behind reactions: energetics and thermodynamics, reaction kinetics, equilibrium, electrochemistry, and the behavior of atoms and molecules. This field supplies the quantitative backbone of most olympiad calculations.</p></div>
+      <div class="field"><b>Analytical chemistry</b><p>How we determine what is present and how much of it: titrations, gravimetric and instrumental analysis, spectroscopy, and separation methods. Olympiad problems often hand you experimental data and ask what it proves.</p></div>
+      <div class="field"><b>Organic chemistry</b><p>The chemistry of carbon: functional groups, reaction mechanisms, isomerism, and synthesis routes. Expect questions that follow a molecule through several transformations and ask you to predict the outcome.</p></div>
+      <div class="field"><b>Inorganic chemistry</b><p>The rest of the periodic table: periodic trends, main group elements, transition metals, and coordination compounds. This is where structure, bonding, and properties meet the periodic law.</p></div>
     </div>
   </section>
 
   <hr class="rule">
 
   <section>
-    <h2>How to prepare with this site</h2>
-    <p class="lead">Three steps, in order. Repeat the cycle until your score stops improving; that is the sign you are ready for the next topic.</p>
+    <h2>How to prepare with Ars Atomie</h2>
+    <p class="lead">Three steps, in order. Repeat the cycle until your score stops improving; that is the signal that you have mastered a topic and are ready for the next one.</p>
     <div class="steps">
       <div class="step">
         <span class="stepnum">1</span>
         <div><b>Study the material</b>
-        <p>Open the <a href="lecture.html">lecture notes</a> and work through the sections your teacher published. Read them fully before attempting any simulation on that topic.</p></div>
+        <p>Open the <a href="lecture.html">lecture notes</a> and work through the sections your teacher published. Read a topic fully before attempting any simulation on it; the notes are your foundation.</p></div>
       </div>
       <div class="step">
         <span class="stepnum">2</span>
         <div><b>Practice with simulations</b>
-        <p>Open the <a href="simulation.html">simulations</a>, pick one, enter your name, and answer. If there is a time limit, the clock runs exactly like the real contest, so practice your pacing, not just your knowledge.</p></div>
+        <p>Open the <a href="simulation.html">simulations</a>, pick one, enter your name, and begin. If a time limit is set, the clock behaves exactly like the real contest, so train your pacing as deliberately as your knowledge.</p></div>
       </div>
       <div class="step">
         <span class="stepnum">3</span>
         <div><b>Review every miss</b>
-        <p>After submitting, study the explanation for each wrong answer. Chemical formulas and equations are rendered properly in the review, so you can see exactly where your reasoning broke down. Then retake.</p></div>
+        <p>After submitting, study the explanation for each wrong answer. Formulas and equations are rendered as properly typeset chemistry, so you can see exactly where your reasoning failed. Then retake the simulation and confirm the lesson stuck.</p></div>
       </div>
     </div>
     <a class="golink" href="simulation.html">Start practicing now</a>
@@ -141,7 +139,7 @@
     <div class="faq">
       <details>
         <summary>Are the simulations graded?</summary>
-        <div class="a">Yes. Each question has a point value, and your total score is shown immediately after submitting, followed by a full review with the answer key.</div>
+        <div class="a">Yes. Each question carries a point value, and your total score appears immediately after submitting, followed by a full review with the answer key.</div>
       </details>
       <details>
         <summary>Do I need an account?</summary>
@@ -149,26 +147,26 @@
       </details>
       <details>
         <summary>Where are my past results?</summary>
-        <div class="a">Results are saved in the browser you used, on that device. To keep a record, take a screenshot of your result page after submitting.</div>
+        <div class="a">Results are saved in the browser you used, on that device. To keep a permanent record, take a screenshot of your result page after submitting.</div>
       </details>
       <details>
         <summary>Can I retake a simulation?</summary>
-        <div class="a">Yes, as many times as you want. Retaking after reading the explanations is the most effective way to use this site.</div>
+        <div class="a">Yes, as many times as you want. Retaking after reading the explanations is the single most effective way to use this site.</div>
       </details>
       <details>
-        <summary>Will I need to write chemical formulas during the simulation?</summary>
-        <div class="a">No. All questions are multiple choice. Formulas and equations appear as properly typeset chemistry, for example balanced reactions with subscripts and states, so you read them the way they would appear in a real paper.</div>
+        <summary>Will I need to type chemical formulas?</summary>
+        <div class="a">No. All questions are multiple choice. Formulas and equations are shown as properly typeset chemistry, with correct subscripts and reaction arrows, so you read them exactly as they would appear on a real exam paper.</div>
       </details>
       <details>
         <summary>The formulas look strange on my screen</summary>
-        <div class="a">The rendering library loads from the internet the first time a page opens. Reload the page once while online and formulas will display correctly.</div>
+        <div class="a">The rendering library loads from the internet the first time a page opens. Reload the page once while online and everything will display correctly.</div>
       </details>
     </div>
   </section>
 
 </main>
 
-<footer><span id="gate" title="Chemistry Olympiad">Chemistry Olympiad Practice</span></footer>
+<footer><span id="gate" title="Ars Atomie">Ars Atomie</span></footer>
 
 <script src="app.js"></script>
 <script>
