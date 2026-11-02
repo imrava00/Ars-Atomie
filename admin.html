@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Ars Atomie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/mhchem.min.js"></script>
+<style>
+  main{width:100%;max-width:920px;margin:0 auto;padding:22px 18px 44px}
+  .admintop{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .tabs{display:inline-flex;background:var(--primary-soft);border:1px solid var(--border);border-radius:11px;padding:4px;gap:4px}
+  .tab{border:none;background:transparent;font:inherit;font-weight:600;font-size:14px;color:var(--muted);
+    padding:8px 18px;border-radius:8px;cursor:pointer;transition:.15s}
+  .tab.on{background:var(--primary);color:var(--btn-ink)}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .spacer{margin-left:auto}
+  .gcard .desc{margin:0}
+  .steplabel{display:flex;align-items:center;gap:9px;margin:2px 0 12px;flex-wrap:wrap}
+  .stepchip{width:24px;height:24px;border-radius:7px;background:var(--primary);color:var(--btn-ink);
+    font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .steplabel b{font-size:14px}
+  .steplabel .muted{font-size:12.5px}
+  .cardhead{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .cardhead h3{margin:0;font-size:15.5px;font-weight:700;letter-spacing:-.01em}
+
+  .qitem{align-items:flex-start}
+  .qidx{width:28px;height:28px;border-radius:8px;background:var(--primary);color:var(--btn-ink);
+    font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .qmain{flex:1;min-width:200px}
+  .qthumb{max-height:56px;border-radius:8px;border:1px solid var(--border);flex-shrink:0}
+  .qacts{display:flex;gap:6px;flex-shrink:0}
+
+  .opt-row{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;background:var(--soft);
+    border:1px solid var(--border);border-radius:12px;padding:12px}
+  .opt-row input[type=radio]{width:18px;height:18px;margin-top:14px;flex-shrink:0;cursor:pointer}
+  .letter{background:var(--surface);color:var(--muted);font-weight:700;border-radius:8px;width:29px;height:29px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;
+    border:1px solid var(--border);margin-top:8px}
+  .opt-fields{flex:1;min-width:0}
+  .opt-fields input[type=text]{font-size:15px;padding:11px 13px}
+  .opt-thumb{max-height:64px;border-radius:8px;display:block;margin-top:8px;border:1px solid var(--border)}
+  .opt-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+  .editorfoot{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+  textarea.tall{min-height:110px;line-height:1.55}
+  @media (max-width:560px){
+    .opt-row{flex-wrap:wrap}
+    .opt-row input[type=radio]{margin-top:8px}
+    .letter{margin-top:8px}
+    .opt-actions{flex-direction:row;width:100%;justify-content:flex-end}
+  }
+
+  .drivecard summary{cursor:pointer;font-weight:700;font-size:14px;display:flex;align-items:center;gap:9px;list-style:none}
+  .drivecard summary::-webkit-details-marker{display:none}
+  .drivecard summary .ic{width:17px;height:17px}
+  .drivecard[open] summary{margin-bottom:4px}
+  .item{display:flex;gap:11px;align-items:center;border:1px solid var(--border);border-radius:11px;
+    padding:10px 13px;margin-bottom:8px;background:var(--soft)}
+  .item .ic{color:var(--muted)}
+  .itt{flex:1;min-width:0}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <span class="mark"><svg class="ic"><use href="#i-logo"/></svg></span>
+    <span class="bt"><span class="brand-name">Ars Atomie</span><span class="brand-sub">Admin</span></span>
+  </a>
+  <nav class="nav">
+    <a class="navlink" href="simulation.html">Simulations</a>
+    <a class="navlink" href="lecture.html">Lecture notes</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="card" id="adminLogin" style="max-width:460px;margin:40px auto">
+    <span class="kicker">Restricted</span>
+    <div class="chead" style="margin:8px 0 10px">
+      <span class="tile"><svg class="ic"><use href="#i-lock"/></svg></span>
+      <h3 style="margin:0;font-size:16px;font-weight:800;letter-spacing:-.01em">Admin Login</h3>
+    </div>
+    <label class="field">Password</label>
+    <div class="row">
+      <input type="password" id="admPass" placeholder="Enter admin password" style="max-width:260px">
+      <button type="button" class="btn primary" id="admLoginBtn"><svg class="ic"><use href="#i-login"/></svg>Login</button>
+    </div>
+  </div>
+
+  <div id="adminPanel" class="hidden">
+    <div class="admintop">
+      <div class="tabs">
+        <button type="button" class="tab on" id="tabSims">Simulations</button>
+        <button type="button" class="tab" id="tabLect">Lecture notes</button>
+      </div>
+      <a class="btn small" href="index.html"><svg class="ic"><use href="#i-home"/></svg>View site</a>
+    </div>
+
+    <!-- ================= SIMULATIONS ================= -->
+    <section id="secSims">
+
+      <div id="simList">
+        <div class="toolbar">
+          <button type="button" class="btn primary" id="newSimBtn"><svg class="ic"><use href="#i-plus"/></svg>New simulation</button>
+          <button type="button" class="btn" id="exportBtn"><svg class="ic"><use href="#i-download"/></svg>Export</button>
+          <button type="button" class="btn" id="importBtn"><svg class="ic"><use href="#i-upload"/></svg>Import</button>
+          <button type="button" class="btn" id="exportSiteBtn"><svg class="ic"><use href="#i-download"/></svg>Export for GitHub</button>
+          <input type="file" id="importFile" accept=".json" hidden>
+        </div>
+        <div class="grid" id="simGrid"></div>
+        <div class="card" style="margin-top:16px">
+          <div class="cardhead">
+            <h3>Recent attempts</h3>
+            <button type="button" class="btn small danger spacer" id="clearAllAtt" title="Delete every attempt">
+              <svg class="ic"><use href="#i-trash"/></svg>Clear all attempts</button>
+          </div>
+          <div id="recentList"></div>
+        </div>
+      </div>
+
+      <div id="simBuilder" class="hidden">
+        <div class="toolbar">
+          <button type="button" class="btn small" id="backSims"><svg class="ic"><use href="#i-chev-l"/></svg>All simulations</button>
+          <span class="pill" id="simPill"></span>
+        </div>
+
+        <div class="card">
+          <div class="steplabel"><span class="stepchip">1</span><b>Simulation details</b>
+            <span class="muted">the title and description students see on the list</span></div>
+          <label class="field">Title</label>
+          <input type="text" id="sbTitle" placeholder="For example: Atomic Structure Quiz 1">
+          <label class="field">Short description (optional)</label>
+          <input type="text" id="sbDesc" placeholder="One line about what this simulation covers">
+          <label class="field">Time limit</label>
+          <div class="row">
+            <input type="number" id="sbDur" min="0" value="0" style="max-width:110px">
+            <span class="muted small">minutes, 0 means no limit</span>
+          </div>
+          <div style="margin-top:14px"><button type="button" class="btn primary" id="sbSave"><svg class="ic"><use href="#i-check"/></svg>Save details</button></div>
+        </div>
+
+        <div class="card">
+          <div class="steplabel"><span class="stepchip">2</span><b>Questions</b>
+            <span class="muted">tick the circle next to the correct option inside each question</span></div>
+          <div id="qListBox"></div>
+          <button type="button" class="btn primary" id="addQBtn" style="margin-top:6px"><svg class="ic"><use href="#i-plus"/></svg>Add question</button>
+        </div>
+
+        <div class="card hidden" id="editor">
+          <div class="chead" style="margin-bottom:10px">
+            <h3 style="margin:0;font-size:15.5px;font-weight:700" id="editorTitle">Add question</h3>
+          </div>
+          <div class="tip">
+            <svg class="ic"><use href="#i-info"/></svg>
+            <span>LaTeX works in every text field. Wrap formulas in <code>$...$</code> for inline or <code>$$...$$</code> for block display. Chemistry uses mhchem syntax, for example <span id="tipChem"></span>.</span>
+          </div>
+
+          <label class="field">Question text</label>
+          <textarea id="qText" class="tall" placeholder="Type your question here. The box grows as you type. You can also leave it empty and attach only a picture."></textarea>
+          <div class="preview hidden" id="qTextPrev"></div>
+
+          <label class="field">Question picture (optional)</label>
+          <div class="row">
+            <label class="btn"><svg class="ic"><use href="#i-image"/></svg>Attach picture<input type="file" id="qImgFile" accept="image/*" hidden></label>
+            <button type="button" class="btn small danger hidden" id="qImgRemove"><svg class="ic"><use href="#i-x"/></svg>Remove picture</button>
+          </div>
+          <img id="qImgPrev" class="hidden" alt="">
+
+          <label class="field">Answer options</label>
+          <p class="small muted" style="margin:-2px 0 10px">Tick the circle on the left to mark the correct option. Each option can have text, a picture, or both.</p>
+          <div id="optRows"></div>
+          <button type="button" class="btn small" id="addOptBtn"><svg class="ic"><use href="#i-plus"/></svg>Add option</button>
+
+          <label class="field">Explanation (shown to students who answer wrong)</label>
+          <textarea id="qExpl" class="tall" placeholder="Explain the solution or the answer key. The box grows as you type."></textarea>
+          <div class="preview hidden" id="qExplPrev"></div>
+
+          <label class="field">Points</label>
+          <div class="row">
+            <input type="number" id="qPoints" value="1" min="0" style="max-width:110px">
+            <span class="muted small">points earned for a correct answer</span>
+          </div>
+
+          <div class="editorfoot">
+            <button type="button" class="btn" id="cancelQBtn"><svg class="ic"><use href="#i-x"/></svg>Cancel</button>
+            <button type="button" class="btn primary" id="saveQBtn"><svg class="ic"><use href="#i-check"/></svg>Save question</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardhead">
+            <h3>Attempts for this simulation</h3>
+            <button type="button" class="btn small danger spacer" id="clearSimAtt" title="Delete all attempts of this simulation">
+              <svg class="ic"><use href="#i-trash"/></svg>Clear these attempts</button>
+          </div>
+          <div id="simAtt"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LECTURE NOTES ================= -->
+    <section id="secLect" class="hidden">
+
+      <div id="lecList">
+        <details class="card drivecard">
+          <summary><svg class="ic"><use href="#i-folder"/></svg>Optional: Google Drive folder link</summary>
+          <p class="small muted" style="margin:6px 0 10px">If all of your documents already sit in one Google Drive folder, paste the share link of that folder here and students get a single Open folder button at the top of the lecture page. This is only a shortcut. Adding materials one by one in the sections below gives students a much nicer organized page, so most of the time you can skip this.</p>
+          <div class="row">
+            <input type="text" id="driveUrl" placeholder="Paste the share link of your Drive folder (optional)" style="max-width:420px">
+            <button type="button" class="btn primary small" id="saveDrive"><svg class="ic"><use href="#i-check"/></svg>Save</button>
+          </div>
+        </details>
+
+        <div class="toolbar" style="margin-top:14px">
+          <button type="button" class="btn primary" id="newSecBtn"><svg class="ic"><use href="#i-plus"/></svg>New section</button>
+        </div>
+        <div class="grid" id="secGrid"></div>
+      </div>
+
+      <div id="secBuilder" class="hidden">
+        <div class="toolbar">
+          <button type="button" class="btn small" id="backLect"><svg class="ic"><use href="#i-chev-l"/></svg>All sections</button>
+          <span class="pill" id="secPill"></span>
+        </div>
+
+        <div class="card">
+          <div class="steplabel"><span class="stepchip">1</span><b>Section details</b>
+            <span class="muted">how the section appears on the lecture page</span></div>
+          <label class="field">Title</label>
+          <input type="text" id="secTitle" placeholder="For example: Chapter 1, Atomic Structure">
+          <label class="field">Short description (optional)</label>
+          <input type="text" id="secDesc" placeholder="One line about what this section contains">
+          <div style="margin-top:14px"><button type="button" class="btn primary" id="secSave"><svg class="ic"><use href="#i-check"/></svg>Save details</button></div>
+        </div>
+
+        <div class="card">
+          <div class="steplabel"><span class="stepchip">2</span><b>Materials</b>
+            <span class="muted">paste a Google Drive link for each document</span></div>
+          <div id="itemList"></div>
+
+          <label class="field">Material title</label>
+          <input type="text" id="itTitle" placeholder="For example Chapter 1 summary">
+          <label class="field">Google Drive link</label>
+          <input type="text" id="itUrl" placeholder="Paste the Drive share link of the document">
+          <p class="small muted" style="margin:6px 0 0">How to get the link: in Google Drive, right click the document, choose Share, set General access to <b>Anyone with the link</b> (Viewer), then copy the link and paste it here. Documents shared this way open right inside the lecture page.</p>
+          <div style="margin-top:14px"><button type="button" class="btn primary" id="addItemBtn"><svg class="ic"><use href="#i-plus"/></svg>Add material</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+const { el, esc, wire, icon, texToHtml, loadDB, saveDB } = ARS;
+const ADMIN_PASSWORD = "admin123";   /* change this before publishing */
+
+let db = loadDB();
+let view = "sims";
+let curSim = null, curSec = null;
+let editingId = null, formOptions = [], formCorrect = -1, formImage = null;
+
+function commit(mutate){
+  const fresh = loadDB();
+  mutate(fresh);
+  if(saveDB(fresh)){ db = fresh; }
+  return db;
+}
+function reSim(){ curSim = curSim ? db.sims.find(x=>x.id===curSim.id) : null; }
+function reSec(){ curSec = curSec ? db.lectures.find(x=>x.id===curSec.id) : null; }
+
+function setPrev(div, text){
+  div.innerHTML = texToHtml(text);
+  div.classList.toggle("hidden", !(text||"").trim());
+}
+function autoGrow(t){
+  if(!t) return;
+  t.style.height = "auto";
+  t.style.height = (t.scrollHeight+2)+"px";
+}
+function fileToDataURL(file, maxW){
+  return new Promise((res, rej)=>{
+    const r = new FileReader();
+    r.onload = e=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const sc = Math.min(1, maxW/img.width);
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+        res(c.toDataURL("image/jpeg",0.82));
+      };
+      img.onerror = ()=>rej();
+      img.src = e.target.result;
+    };
+    r.onerror = ()=>rej();
+    r.readAsDataURL(file);
+  });
+}
+function driveId(url){
+  let m = String(url||"").match(/drive\.google\.com\/file\/d\/([^/?#]+)/);
+  if(m) return m[1];
+  m = String(url||"").match(/[?&]id=([^&#]+)/);
+  if(m) return m[1];
+  return null;
+}
+function chev(dir){
+  return '<svg class="ic" viewBox="0 0 24 24">'
+    + (dir==="up" ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>')
+    + '</svg>';
+}
+
+function showTab(t){
+  view = t;
+  el("tabSims").classList.toggle("on", t==="sims");
+  el("tabLect").classList.toggle("on", t==="lect");
+  el("secSims").classList.toggle("hidden", t!=="sims");
+  el("secLect").classList.toggle("hidden", t!=="lect");
+  db = loadDB();
+  if(t==="sims") renderSims(); else renderLects();
+}
+
+function sameAttempt(x, a){
+  return x.simId===a.simId && x.date===a.date && x.name===a.name
+      && x.score===a.score && x.max===a.max;
+}
+function attemptRow(a, opts){
+  opts = opts||{};
+  const d = document.createElement("div"); d.className = "att";
+  d.innerHTML = '<span><b>'+esc(a.name)+'</b>'
+    + (opts.showSim?' <span class="muted small">in '+esc(a.simTitle||"")+'</span>':'')+'</span>'
+    + '<span class="row" style="gap:10px"><span class="pill">'+a.score+'/'+a.max+'</span>'
+    + '<span class="muted small">'+new Date(a.date).toLocaleString()+'</span>'
+    + (opts.onDelete?'<button type="button" class="btn small danger" data-tdel title="Delete this attempt">'+icon("trash")+'</button>':'')
+    + '</span>';
+  if(opts.onDelete){ d.querySelector("[data-tdel]").onclick = ()=>opts.onDelete(a); }
+  return d;
+}
+function deleteAttempt(a){
+  if(!confirm("Delete this attempt by "+a.name+"? This cannot be undone.")) return;
+  commit(f=>{ f.attempts = f.attempts.filter(x=>!sameAttempt(x,a)); });
+  refreshAttemptViews();
+}
+function clearSimAttempts(){
+  if(!curSim) return;
+  const n = db.attempts.filter(x=>x.simId===curSim.id).length;
+  if(!n){ alert("There are no attempts to delete for this simulation."); return; }
+  if(!confirm("Delete all "+n+" attempt(s) for this simulation? This cannot be undone.")) return;
+  commit(f=>{ f.attempts = f.attempts.filter(x=>x.simId!==curSim.id); });
+  refreshAttemptViews();
+}
+function clearAllAttempts(){
+  const n = db.attempts.length;
+  if(!n){ alert("There are no attempts to delete."); return; }
+  if(!confirm("Delete all "+n+" attempt(s) across every simulation? This cannot be undone.")) return;
+  commit(f=>{ f.attempts = []; });
+  refreshAttemptViews();
+}
+function refreshAttemptViews(){
+  if(view!=="sims") return;
+  if(!el("simList").classList.contains("hidden")){ renderSimGrid(); renderRecent(); }
+  if(!el("simBuilder").classList.contains("hidden")){ reSim(); if(curSim) renderSimAtt(); }
+}
+
+function simMeta(s){
+  const pts = s.questions.reduce((a,q)=>a+(q.points||0),0);
+  return s.questions.length+" questions · "+pts+" points"+(s.durationMin>0?" · "+s.durationMin+" min":"");
+}
+function renderSimGrid(){
+  const grid = el("simGrid"); grid.innerHTML = "";
+  if(!db.sims.length){
+    grid.innerHTML = '<div class="empty">No simulations yet. Click "New simulation" to create the first one.</div>';
+  }
+  db.sims.forEach(s=>{
+    const n = db.attempts.filter(a=>a.simId===s.id).length;
+    const d = document.createElement("div"); d.className = "gcard";
+    d.innerHTML = '<div class="chead"><div><b>'+texToHtml(s.title)+'</b><div class="small muted">'+simMeta(s)+'</div></div></div>'
+      + (s.desc ? '<p class="small muted desc">'+texToHtml(s.desc)+'</p>' : '')
+      + '<div class="row" style="margin-top:auto">'
+      + '<button type="button" class="btn small primary" data-open>'+icon("edit")+'Open builder</button>'
+      + '<button type="button" class="btn small danger" data-del>'+icon("trash")+'</button>'
+      + '<span class="pill spacer">'+n+' attempt'+(n===1?"":"s")+'</span></div>';
+    d.querySelector("[data-open]").onclick = ()=>openSim(s.id);
+    d.querySelector("[data-del]").onclick = ()=>{
+      if(confirm("Delete this simulation and its questions? Attempts will be kept.")){
+        commit(f=>{ f.sims = f.sims.filter(x=>x.id!==s.id); });
+        renderSimGrid(); renderRecent();
+      }
+    };
+    grid.appendChild(d);
+  });
+}
+function renderRecent(){
+  el("clearAllAtt").disabled = db.attempts.length===0;
+  const rec = el("recentList"); rec.innerHTML = "";
+  if(!db.attempts.length){
+    rec.innerHTML = '<div class="empty">No attempts yet. Results appear here after students submit.</div>';
+    return;
+  }
+  [...db.attempts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6)
+    .forEach(a=>rec.appendChild(attemptRow(a,{showSim:true,onDelete:deleteAttempt})));
+}
+function renderSims(){
+  el("simList").classList.remove("hidden");
+  el("simBuilder").classList.add("hidden");
+  curSim = null;
+  renderSimGrid(); renderRecent();
+}
+
+function openSim(id){
+  curSim = db.sims.find(x=>x.id===id);
+  if(!curSim) return;
+  showSim();
+}
+function showSim(){
+  el("simList").classList.add("hidden");
+  el("simBuilder").classList.remove("hidden");
+  el("sbTitle").value = curSim.title;
+  el("sbDesc").value = curSim.desc||"";
+  el("sbDur").value = curSim.durationMin||0;
+  renderQList(); renderSimAtt(); closeEditor();
+  window.scrollTo(0,0);
+}
+function renderQList(){
+  el("simPill").textContent = simMeta(curSim);
+  const box = el("qListBox");
+  if(!curSim.questions.length){
+    box.innerHTML = '<div class="empty" style="margin-bottom:12px">No questions yet. Add the first one below.</div>';
+    return;
+  }
+  box.innerHTML = "";
+  curSim.questions.forEach((q,i)=>{
+    const d = document.createElement("div"); d.className = "qitem";
+    d.innerHTML = '<span class="qidx">'+(i+1)+'</span>'
+      + '<div class="qmain">'
+      + '<div>'+texToHtml(q.text)+'</div>'
+      + '<div class="small muted">'+q.options.length+' options · correct: <b>'
+      + String.fromCharCode(65+q.correctIndex)+'</b> · '+q.points+' pt'+(q.points!==1?"s":"")
+      + (q.explanation?' · has explanation':'')+'</div></div>'
+      + (q.image?'<img class="qthumb" src="'+q.image+'">':'')
+      + '<div class="qacts">'
+      + '<button type="button" class="btn small" data-up title="Move up" '+(i===0?"disabled":"")+'>'+chev("up")+'</button>'
+      + '<button type="button" class="btn small" data-down title="Move down" '+(i===curSim.questions.length-1?"disabled":"")+'>'+chev("down")+'</button>'
+      + '<button type="button" class="btn small" data-edit title="Edit">'+icon("edit")+'</button>'
+      + '<button type="button" class="btn small danger" data-del title="Delete">'+icon("trash")+'</button>'
+      + '</div>';
+    d.querySelector("[data-up]").onclick = ()=>moveQ(i,-1);
+    d.querySelector("[data-down]").onclick = ()=>moveQ(i,1);
+    d.querySelector("[data-edit]").onclick = ()=>openEditor(q.id);
+    d.querySelector("[data-del]").onclick = ()=>{
+      if(confirm("Delete this question?")){
+        commit(f=>{
+          const s = f.sims.find(x=>x.id===curSim.id);
+          if(s) s.questions = s.questions.filter(x=>x.id!==q.id);
+        });
+        reSim(); renderQList(); renderSimAtt();
+      }
+    };
+    box.appendChild(d);
+  });
+}
+function moveQ(i, dir){
+  const j = i+dir;
+  if(j<0 || j>=curSim.questions.length) return;
+  commit(f=>{
+    const s = f.sims.find(x=>x.id===curSim.id);
+    if(!s) return;
+    const q = s.questions.splice(i,1)[0];
+    s.questions.splice(j,0,q);
+  });
+  reSim(); renderQList();
+}
+function renderSimAtt(){
+  const box = el("simAtt");
+  const list = db.attempts.filter(a=>a.simId===curSim.id);
+  el("clearSimAtt").disabled = list.length===0;
+  if(!list.length){ box.innerHTML = '<div class="empty">No attempts for this simulation yet.</div>'; return; }
+  box.innerHTML = "";
+  [...list].sort((a,b)=>new Date(b.date)-new Date(a.date))
+    .forEach(a=>box.appendChild(attemptRow(a,{showSim:false,onDelete:deleteAttempt})));
+}
+
+function openEditor(id){
+  editingId = id;
+  const q = id ? curSim.questions.find(x=>x.id===id) : null;
+  el("editorTitle").textContent = q ? "Edit question" : "Add question";
+  el("qText").value = q ? q.text : "";
+  setPrev(el("qTextPrev"), el("qText").value);
+  formImage = q ? (q.image||null) : null;
+  formOptions = q ? q.options.map(o=>({text:o.text||"", image:o.image||null}))
+                  : [{text:"",image:null},{text:"",image:null}];
+  formCorrect = q ? q.correctIndex : -1;
+  el("qExpl").value = q ? (q.explanation||"") : "";
+  setPrev(el("qExplPrev"), el("qExpl").value);
+  el("qPoints").value = q ? q.points : 1;
+  renderOptRows(); renderQImage();
+  el("editor").classList.remove("hidden");
+  autoGrow(el("qText")); autoGrow(el("qExpl"));
+  el("editor").scrollIntoView({behavior:"smooth"});
+}
+function closeEditor(){ el("editor").classList.add("hidden"); editingId = null; }
+function renderQImage(){
+  el("qImgPrev").src = formImage||"";
+  el("qImgPrev").classList.toggle("hidden", !formImage);
+  el("qImgRemove").classList.toggle("hidden", !formImage);
+}
+function renderOptRows(){
+  const box = el("optRows"); box.innerHTML = "";
+  formOptions.forEach((o,i)=>{
+    const row = document.createElement("div"); row.className = "opt-row";
+    row.innerHTML = '<input type="radio" name="correctOpt" '+(formCorrect===i?"checked":"")+' title="Mark as the correct answer" aria-label="Mark option '+String.fromCharCode(65+i)+' as correct">'
+      + '<span class="letter">'+String.fromCharCode(65+i)+'</span>'
+      + '<div class="opt-fields">'
+      + '<input type="text" class="opt-text" placeholder="Option '+String.fromCharCode(65+i)+' text (LaTeX allowed)" value="'+esc(o.text)+'">'
+      + '<div class="preview hidden opt-prev"></div>'
+      + (o.image?'<img class="opt-thumb" src="'+o.image+'">':"")
+      + '</div>'
+      + '<div class="opt-actions">'
+      + '<label class="btn small" title="Attach a picture to this option">'+icon("image")+'<input type="file" accept="image/*" hidden></label>'
+      + (o.image?'<button type="button" class="btn small danger" data-rmimg title="Remove picture">'+icon("x")+'</button>':"")
+      + '<button type="button" class="btn small danger" data-del title="Remove this option">'+icon("trash")+'</button>'
+      + '</div>';
+    row.querySelector("input[type=radio]").onchange = ()=>{ formCorrect = i; };
+    const prev = row.querySelector(".opt-prev");
+    const txt = row.querySelector(".opt-text");
+    txt.oninput = ()=>{ formOptions[i].text = txt.value; setPrev(prev, txt.value); };
+    setPrev(prev, o.text);
+    row.querySelector("input[type=file]").onchange = async e=>{
+      const f = e.target.files[0]; if(!f) return;
+      try{ formOptions[i].image = await fileToDataURL(f, 500); renderOptRows(); }
+      catch(err){ alert("Could not read that image."); }
+    };
+    const rm = row.querySelector("[data-rmimg]");
+    if(rm) rm.onclick = ()=>{ formOptions[i].image = null; renderOptRows(); };
+    row.querySelector("[data-del]").onclick = ()=>{
+      if(formOptions.length<=2){ alert("A question needs at least 2 options."); return; }
+      formOptions.splice(i,1);
+      if(formCorrect===i) formCorrect = -1; else if(formCorrect>i) formCorrect--;
+      renderOptRows();
+    };
+    box.appendChild(row);
+  });
+}
+
+function renderLects(){
+  el("lecList").classList.remove("hidden");
+  el("secBuilder").classList.add("hidden");
+  curSec = null;
+  el("driveUrl").value = db.driveUrl||"";
+  const grid = el("secGrid"); grid.innerHTML = "";
+  if(!db.lectures.length){
+    grid.innerHTML = '<div class="empty">No sections yet. Click "New section" to create the first one.</div>';
+  }
+  db.lectures.forEach(s=>{
+    const d = document.createElement("div"); d.className = "gcard";
+    d.innerHTML = '<div class="chead"><div><b>'+texToHtml(s.title)+'</b><div class="small muted">'+s.items.length+' material'+(s.items.length===1?"":"s")+'</div></div></div>'
+      + (s.desc ? '<p class="small muted desc">'+texToHtml(s.desc)+'</p>' : '')
+      + '<div class="row" style="margin-top:auto">'
+      + '<button type="button" class="btn small primary" data-open>'+icon("edit")+'Open</button>'
+      + '<button type="button" class="btn small danger" data-del>'+icon("trash")+'</button></div>';
+    d.querySelector("[data-open]").onclick = ()=>openSec(s.id);
+    d.querySelector("[data-del]").onclick = ()=>{
+      if(confirm("Delete this section and all its materials?")){
+        commit(f=>{ f.lectures = f.lectures.filter(x=>x.id!==s.id); });
+        renderLects();
+      }
+    };
+    grid.appendChild(d);
+  });
+}
+
+function openSec(id){
+  curSec = db.lectures.find(x=>x.id===id);
+  if(!curSec) return;
+  showSec();
+}
+function showSec(){
+  el("lecList").classList.add("hidden");
+  el("secBuilder").classList.remove("hidden");
+  el("secTitle").value = curSec.title;
+  el("secDesc").value = curSec.desc||"";
+  el("itTitle").value = ""; el("itUrl").value = "";
+  renderItems();
+  window.scrollTo(0,0);
+}
+function renderItems(){
+  el("secPill").textContent = curSec.items.length+" material"+(curSec.items.length===1?"":"s");
+  const box = el("itemList");
+  if(!curSec.items.length){
+    box.innerHTML = '<div class="empty" style="margin-bottom:12px">No materials yet. Add the first one below.</div>';
+    return;
+  }
+  box.innerHTML = "";
+  curSec.items.forEach(it=>{
+    const isDrive = it.type==="link" && driveId(it.url);
+    const chip = it.type==="file" ? "File" : (isDrive ? "Drive" : "Link");
+    const ic = it.type==="file" ? "file" : "link";
+    const d = document.createElement("div"); d.className = "item";
+    d.innerHTML = '<svg class="ic"><use href="#i-'+ic+'"/></svg>'
+      + '<div class="itt"><b>'+texToHtml(it.title)+'</b></div>'
+      + '<span class="pill">'+chip+'</span>'
+      + '<button type="button" class="btn small danger" data-del>'+icon("trash")+'</button>';
+    d.querySelector("[data-del]").onclick = ()=>{
+      if(confirm("Remove this material?")){
+        commit(f=>{
+          const s = f.lectures.find(x=>x.id===curSec.id);
+          if(s) s.items = s.items.filter(x=>x.id!==it.id);
+        });
+        reSec(); renderItems();
+      }
+    };
+    box.appendChild(d);
+  });
+}
+
+function init(){
+  wire("admLoginBtn","click",()=>{
+    if(el("admPass").value===ADMIN_PASSWORD){
+      el("adminLogin").classList.add("hidden");
+      el("adminPanel").classList.remove("hidden");
+      showTab("sims");
+    }else{
+      alert("Wrong password.");
+    }
+  });
+  wire("admPass","keydown",e=>{ if(e.key==="Enter") el("admLoginBtn").click(); });
+  wire("tabSims","click",()=>showTab("sims"));
+  wire("tabLect","click",()=>showTab("lect"));
+
+  wire("clearAllAtt","click",clearAllAttempts);
+  wire("clearSimAtt","click",clearSimAttempts);
+
+  wire("newSimBtn","click",()=>{
+    let nid = null;
+    commit(f=>{
+      const s = { id:Date.now(), title:"Untitled simulation", desc:"", durationMin:0, questions:[] };
+      f.sims.push(s); nid = s.id;
+    });
+    curSim = db.sims.find(x=>x.id===nid);
+    if(curSim) showSim();
+  });
+  wire("backSims","click",()=>renderSims());
+  wire("sbSave","click",()=>{
+    if(!curSim) return;
+    commit(f=>{
+      const s = f.sims.find(x=>x.id===curSim.id);
+      if(!s) return;
+      s.title = el("sbTitle").value.trim()||"Untitled simulation";
+      s.desc = el("sbDesc").value.trim();
+      s.durationMin = Math.max(0, parseInt(el("sbDur").value)||0);
+    });
+    reSim(); renderQList(); renderSimAtt();
+  });
+  wire("addQBtn","click",()=>openEditor(null));
+  wire("addOptBtn","click",()=>{
+    if(formOptions.length>=6){ alert("Maximum 6 options."); return; }
+    formOptions.push({text:"",image:null}); renderOptRows();
+  });
+  wire("qText","input",e=>{ setPrev(el("qTextPrev"), e.target.value); autoGrow(e.target); });
+  wire("qExpl","input",e=>{ setPrev(el("qExplPrev"), e.target.value); autoGrow(e.target); });
+  wire("qImgFile","change",async e=>{
+    const f = e.target.files[0]; if(!f) return;
+    try{ formImage = await fileToDataURL(f, 900); renderQImage(); }
+    catch(err){ alert("Could not read that image."); }
+    e.target.value = "";
+  });
+  wire("qImgRemove","click",()=>{ formImage=null; renderQImage(); });
+  wire("saveQBtn","click",()=>{
+    if(!curSim) return;
+    const text = el("qText").value.trim();
+    if(!text && !formImage){ alert("Enter question text or attach a picture."); return; }
+    if(formCorrect<0){ alert("Tick the circle next to the correct option."); return; }
+    if(formOptions.some(o=>!o.text.trim() && !o.image)){ alert("Every option needs text or a picture."); return; }
+    const q = { id: editingId||Date.now(), text: el("qText").value, image:formImage,
+      options: formOptions.map(o=>({text:o.text, image:o.image})),
+      correctIndex: formCorrect, explanation: el("qExpl").value,
+      points: Math.max(0, parseInt(el("qPoints").value)||1) };
+    commit(f=>{
+      const s = f.sims.find(x=>x.id===curSim.id);
+      if(!s) return;
+      if(editingId){
+        const i = s.questions.findIndex(x=>x.id===editingId);
+        if(i>-1) s.questions[i] = q;
+      }else{
+        s.questions.push(q);
+      }
+    });
+    reSim(); closeEditor(); renderQList();
+  });
+  wire("cancelQBtn","click",closeEditor);
+  wire("exportBtn","click",()=>{
+    const blob = new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "ars_atomie_export.json"; a.click();
+  });
+  wire("exportSiteBtn","click",()=>{
+    const seed = { sims: db.sims, lectures: db.lectures, driveUrl: db.driveUrl||"" };
+    const content = "/* Ars Atomie published content. Replace this file on GitHub to update the site. */\n"
+      + "window.ARS_SEED = " + JSON.stringify(seed, null, 2) + ";\n";
+    const blob = new Blob([content],{type:"application/javascript"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "data.js"; a.click();
+  });
+  wire("importBtn","click",()=>el("importFile").click());
+  wire("importFile","change",e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      try{
+        const obj = JSON.parse(r.result);
+        if(!obj || !Array.isArray(obj.sims)) throw 0;
+        if(!confirm("Replace everything with the imported file?")) return;
+        commit(f=>{
+          f.sims = (obj.sims||[]).map(s=>Object.assign({},s,{questions:s.questions||[]}));
+          f.lectures = (obj.lectures||[]).map(s=>Object.assign({},s,{items:s.items||[]}));
+          f.attempts = obj.attempts||[]; f.driveUrl = obj.driveUrl||"";
+        });
+        showTab(view);
+      }catch(err){ alert("Invalid file."); }
+    };
+    r.readAsText(f); e.target.value = "";
+  });
+
+  wire("saveDrive","click",()=>{
+    commit(f=>{ f.driveUrl = el("driveUrl").value.trim(); });
+    const b = el("saveDrive");
+    b.textContent = "Saved";
+    setTimeout(()=>{ b.innerHTML = icon("check")+"Save"; }, 1300);
+  });
+  wire("newSecBtn","click",()=>{
+    let nid = null;
+    commit(f=>{
+      const s = { id:Date.now(), title:"Untitled section", desc:"", items:[] };
+      f.lectures.push(s); nid = s.id;
+    });
+    curSec = db.lectures.find(x=>x.id===nid);
+    if(curSec) showSec();
+  });
+  wire("backLect","click",()=>renderLects());
+  wire("secSave","click",()=>{
+    if(!curSec) return;
+    commit(f=>{
+      const s = f.lectures.find(x=>x.id===curSec.id);
+      if(!s) return;
+      s.title = el("secTitle").value.trim()||"Untitled section";
+      s.desc = el("secDesc").value.trim();
+    });
+    reSec(); renderItems();
+  });
+  wire("addItemBtn","click",()=>{
+    if(!curSec) return;
+    const title = el("itTitle").value.trim();
+    if(!title){ alert("Give the material a title."); return; }
+    const url = el("itUrl").value.trim();
+    if(!url){ alert("Paste the Google Drive link first."); return; }
+    commit(f=>{
+      const s = f.lectures.find(x=>x.id===curSec.id);
+      if(s) s.items.push({ id:Date.now(), title, type:"link", url });
+    });
+    reSec();
+    el("itTitle").value=""; el("itUrl").value="";
+    renderItems();
+  });
+
+  try{ el("tipChem").innerHTML = texToHtml("$\\ce{H2SO4}$ and $\\ce{N2 + 3H2 <=> 2NH3}$"); }catch(e){}
+}
+if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); }
+else{ init(); }
+</script>
+</body>
+</html>

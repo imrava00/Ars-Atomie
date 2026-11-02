@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture notes · Ars Atomie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/mhchem.min.js"></script>
+<style>
+  main{width:100%;max-width:820px;margin:0 auto;padding:26px 18px 44px}
+  .pagehead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .pagetitle{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+  .pagesub{color:var(--muted);margin:0;font-size:14px}
+  .sec .items{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+  .item{display:flex;gap:11px;align-items:center;border:1px solid var(--border);border-radius:11px;
+    padding:11px 13px;background:var(--surface);cursor:pointer;transition:.12s}
+  .item:hover{border-color:var(--ink);transform:translateY(-1px)}
+  .item .ic{color:var(--muted)}
+  .itt{flex:1;min-width:0;font-size:14.5px;font-weight:600}
+  .driveband{display:flex;gap:13px;align-items:center;margin-bottom:16px}
+  .modal{position:fixed;inset:0;background:var(--overlay);z-index:60;display:flex;
+    align-items:flex-start;justify-content:center;padding:4vh 16px}
+  .mpanel{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;
+    max-width:920px;height:88vh;display:flex;flex-direction:column;
+    box-shadow:0 30px 80px rgba(0,0,0,.4);overflow:hidden}
+  .mtop{display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--border)}
+  .mbody{flex:1;overflow:auto;background:var(--track);display:flex}
+  .mbody iframe,.mbody object{width:100%;height:100%;border:none}
+  .mfoot{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <span class="mark"><svg class="ic"><use href="#i-logo"/></svg></span>
+    <span class="bt"><span class="brand-name">Ars Atomie</span><span class="brand-sub">Lecture notes</span></span>
+  </a>
+  <nav class="nav">
+    <a class="navlink" href="index.html">Home</a>
+    <a class="navlink" href="simulation.html">Simulations</a>
+    <a class="navlink cur" href="lecture.html">Lecture notes</a>
+  </nav>
+</header>
+
+<main>
+  <div class="pagehead">
+    <div>
+      <span class="kicker">Study</span>
+      <h2 class="pagetitle">Lecture notes</h2>
+      <p class="pagesub">Study materials published by your teacher, organized by section.</p>
+    </div>
+    <button type="button" class="btn small" id="refreshBtn"><svg class="ic"><use href="#i-rotate"/></svg>Refresh</button>
+  </div>
+
+  <div id="driveBand"></div>
+  <div id="secWrap"></div>
+</main>
+
+<div class="modal hidden" id="modal">
+  <div class="mpanel">
+    <div class="mtop">
+      <b id="modalTitle"></b>
+      <button type="button" class="btn small" id="modalClose"><svg class="ic"><use href="#i-x"/></svg>Close</button>
+    </div>
+    <div class="mbody" id="modalBody"></div>
+    <div class="mfoot"><a class="btn small" id="modalOpen" href="#" target="_blank" rel="noopener">Open in new tab</a></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+const { el, esc, wire, icon, texToHtml, loadDB } = ARS;
+const DATA_KEY = "ars_atomie_v2";
+
+let db = loadDB();
+
+function driveId(url){
+  let m = String(url||"").match(/drive\.google\.com\/file\/d\/([^/?#]+)/);
+  if(m) return m[1];
+  m = String(url||"").match(/[?&]id=([^&#]+)/);
+  if(m) return m[1];
+  return null;
+}
+function itemIcon(it){
+  return it.type==="file" ? "file" : "link";
+}
+function itemChip(it){
+  if(it.type==="file") return "File";
+  return driveId(it.url) ? "Drive" : "Link";
+}
+function buildSection(sec){
+  const card = document.createElement("div");
+  card.className = "card sec";
+  card.innerHTML = '<div class="chead">'
+    + '<div style="flex:1;min-width:0"><b style="font-size:16px;letter-spacing:-.01em">'+texToHtml(sec.title)+'</b>'
+    + (sec.desc?'<div class="small muted">'+texToHtml(sec.desc)+'</div>':"")
+    + '</div><span class="pill">'+sec.items.length+' material'+(sec.items.length===1?"":"s")+'</span></div>'
+    + '<div class="items"></div>';
+  const items = card.querySelector(".items");
+  if(!sec.items.length){
+    items.innerHTML = '<div class="empty">No materials in this section yet.</div>';
+    return card;
+  }
+  sec.items.forEach(it=>{
+    try{
+      if(!it || typeof it!=="object") return;
+      const d = document.createElement("div");
+      d.className = "item";
+      d.innerHTML = '<svg class="ic"><use href="#i-'+itemIcon(it)+'"/></svg>'
+        + '<div class="itt">'+texToHtml(it.title)+'</div>'
+        + '<span class="pill">'+itemChip(it)+'</span>'
+        + '<svg class="ic"><use href="#i-external"/></svg>';
+      d.onclick = ()=>openItem(sec, it);
+      items.appendChild(d);
+    }catch(e){ /* skip a broken material, keep the rest visible */ }
+  });
+  return card;
+}
+function render(){
+  try{
+    db = loadDB();
+    const band = el("driveBand");
+    if(db.driveUrl){
+      band.innerHTML = '<div class="card driveband"><span class="tile"><svg class="ic"><use href="#i-folder"/></svg></span>'
+        + '<div style="flex:1"><b>Google Drive folder</b><div class="small muted">All lecture documents in one place</div></div>'
+        + '<a class="btn primary small" href="'+db.driveUrl+'" target="_blank" rel="noopener">Open folder</a></div>';
+    }else{
+      band.innerHTML = "";
+    }
+    const wrap = el("secWrap"); wrap.innerHTML = "";
+    if(!db.lectures.length){
+      wrap.innerHTML = '<div class="empty">No sections yet. Materials will appear here once your teacher publishes them.<br><br>'
+        + 'If the site is hosted, make sure a data.js file with content was uploaded and reload once. '
+        + 'If you already created sections in the admin page, click the info button in the top bar here and in the admin page, and compare the "Lecture sections" numbers.</div>';
+      return;
+    }
+    let broken = 0;
+    db.lectures.forEach(sec=>{
+      let card;
+      try{ card = buildSection(sec); }
+      catch(e){
+        broken++;
+        card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = '<b>One section could not be displayed.</b>'
+          + '<div class="small muted">'+esc(e && e.message ? e.message : String(e))+'</div>';
+      }
+      wrap.appendChild(card);
+    });
+    if(broken){
+      const note = document.createElement("div");
+      note.className = "empty";
+      note.style.marginTop = "12px";
+      note.innerHTML = broken+' section(s) had problems and are shown as error cards. '
+        + 'Click the info button in the top bar and press <b>Repair data</b>, then refresh.';
+      wrap.appendChild(note);
+    }
+  }catch(err){
+    el("secWrap").innerHTML = '<div class="empty" style="border-color:var(--ink)">'
+      + 'The lecture list failed to load. Message: '+esc(err && err.message ? err.message : String(err))+'</div>';
+  }
+}
+function openModal(title){
+  el("modalTitle").innerHTML = texToHtml(title);
+  el("modal").classList.remove("hidden");
+}
+function closeModal(){
+  el("modal").classList.add("hidden");
+  el("modalBody").innerHTML = "";
+}
+function openItem(sec, it){
+  const open = el("modalOpen");
+  open.removeAttribute("download");
+  const id = driveId(it.url);
+  if(id){
+    openModal(it.title||sec.title);
+    el("modalBody").innerHTML = '<iframe src="https://drive.google.com/file/d/'+id+'/preview" allow="autoplay"></iframe>';
+    open.href = "https://drive.google.com/file/d/"+id+"/view";
+    open.textContent = "Open in new tab";
+    open.classList.remove("hidden");
+    return;
+  }
+  if(/\.pdf($|\?)/i.test(it.url)){
+    openModal(it.title||sec.title);
+    el("modalBody").innerHTML = '<iframe src="'+it.url+'"></iframe>';
+    open.href = it.url;
+    open.textContent = "Open in new tab";
+    open.classList.remove("hidden");
+    return;
+  }
+  window.open(it.url, "_blank", "noopener");
+}
+
+function init(){
+  try{
+    el("modalClose").onclick = closeModal;
+    el("modal").addEventListener("click", e=>{ if(e.target===el("modal")) closeModal(); });
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
+    wire("refreshBtn","click",()=>render());
+
+    window.addEventListener("storage", e=>{
+      if(e.key!==DATA_KEY && e.key!==null) return;
+      if(!el("modal").classList.contains("hidden")) return;
+      render();
+    });
+    document.addEventListener("visibilitychange", ()=>{
+      if(document.hidden) return;
+      if(!el("modal").classList.contains("hidden")) return;
+      render();
+    });
+
+    render();
+  }catch(err){
+    el("secWrap").innerHTML = '<div class="empty" style="border-color:var(--ink)">'
+      + 'The page failed to start. Message: '+esc(err && err.message ? err.message : String(err))+'</div>';
+  }
+}
+if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); }
+else{ init(); }
+</script>
+</body>
+</html>

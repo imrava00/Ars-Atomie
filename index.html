@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ars Atomie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/mhchem.min.js"></script>
+<style>
+  main{width:100%;max-width:960px;margin:0 auto;padding:26px 18px 44px}
+
+  .hero{position:relative;text-align:center;padding:52px 22px 36px;
+    background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--ink);
+    border-radius:18px}
+  .gate{display:inline-block;cursor:pointer;border-radius:22px}
+  .hero h1{margin:18px 0 4px;font-size:44px;font-weight:800;letter-spacing:-.03em}
+  .tagline{margin:0 0 14px;color:var(--muted);font-weight:600;font-size:12px;
+    letter-spacing:2.6px;text-transform:uppercase}
+  .welcome{max-width:520px;margin:0 auto;color:var(--muted);font-size:15px;line-height:1.65}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+
+  .statband{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:16px}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:17px}
+  .stat b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .stat span{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1.4px;text-transform:uppercase}
+
+  .sect{margin-top:40px}
+  .secthead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:16px}
+  .secthead h2{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em}
+  .secthead .sub{font-size:13.5px;color:var(--muted)}
+  .viewall{margin-left:auto;font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;
+    display:inline-flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.8px}
+  .viewall:hover{text-decoration:underline}
+
+  .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+  .scard{display:flex;flex-direction:column;gap:9px;background:var(--surface);
+    border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:.15s;min-width:0}
+  .scard:hover{transform:translateY(-2px);border-color:var(--ink)}
+  .scard .chead{gap:11px}
+  .scard .chead>div{min-width:0}
+  .scard b{display:block;font-size:15px;line-height:1.35;letter-spacing:-.01em}
+  .scard .meta{font-size:12.5px;color:var(--muted)}
+  .scard .desc{margin:0;font-size:13px;color:var(--muted);line-height:1.55;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .scard .foot{margin-top:auto;padding-top:4px}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:40px}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+  .stepnum{width:28px;height:28px;border-radius:8px;font-weight:800;font-size:13px;
+    display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .n1{background:var(--ink);color:var(--surface)}
+  .n2{background:var(--primary-soft);color:var(--ink);border:1px solid var(--border)}
+  .n3{background:var(--surface);border:1px solid var(--border);color:var(--ink)}
+  .step b{display:block;margin-bottom:4px;font-size:14.5px}
+  .step p{margin:0;font-size:13px;color:var(--muted);line-height:1.6}
+
+  footer{max-width:960px;margin:0 auto;width:100%;padding:14px 18px 28px;
+    text-align:center;color:var(--muted);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <span class="mark"><svg class="ic"><use href="#i-logo"/></svg></span>
+    <span class="bt"><span class="brand-name">Ars Atomie</span><span class="brand-sub">Olympiad Simulation</span></span>
+  </a>
+  <nav class="nav">
+    <a class="navlink" href="simulation.html">Simulations</a>
+    <a class="navlink" href="lecture.html">Lecture notes</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="gate" id="gate" title="Ars Atomie">
+      <span class="mark big"><svg class="ic"><use href="#i-logo"/></svg></span>
+    </div>
+    <h1>Ars Atomie</h1>
+    <p class="tagline">Olympiad Simulation</p>
+    <p class="welcome">Your practice arena for science olympiads. Train with simulations built by your teacher, then study the lecture notes before you try again.</p>
+    <div class="cta">
+      <a class="btn primary" href="simulation.html"><svg class="ic"><use href="#i-play"/></svg>Start practicing</a>
+      <a class="btn" href="lecture.html"><svg class="ic"><use href="#i-book"/></svg>Browse lecture notes</a>
+    </div>
+  </div>
+
+  <div class="statband" id="statband"></div>
+
+  <div class="sect" id="simSect">
+    <div class="secthead">
+      <h2>Practice simulations</h2>
+      <span class="sub">The latest quizzes ready to attempt</span>
+      <a class="viewall" href="simulation.html">View all<svg class="ic"><use href="#i-chev-r"/></svg></a>
+    </div>
+    <div class="sgrid" id="simGrid"></div>
+  </div>
+
+  <div class="sect" id="lecSect">
+    <div class="secthead">
+      <h2>Lecture notes</h2>
+      <span class="sub">Study materials organized by section</span>
+      <a class="viewall" href="lecture.html">View all<svg class="ic"><use href="#i-chev-r"/></svg></a>
+    </div>
+    <div class="sgrid" id="lecGrid"></div>
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="stepnum n1">1</div><b>Pick a simulation</b><p>Open any simulation from the list, enter your name, and begin.</p></div>
+    <div class="step"><div class="stepnum n2">2</div><b>Answer and submit</b><p>Move freely between questions and submit when you are done.</p></div>
+    <div class="step"><div class="stepnum n3">3</div><b>Review the key</b><p>Every wrong answer shows the correct choice and its explanation.</p></div>
+  </div>
+</main>
+
+<footer>Ars Atomie</footer>
+
+<script src="app.js"></script>
+<script>
+const { el, wire, icon, texToHtml, loadDB } = ARS;
+const DATA_KEY = "ars_atomie_v2";
+
+function simMeta(s){
+  const pts = s.questions.reduce((a,q)=>a+(q.points||0),0);
+  return s.questions.length+" questions · "+pts+" points"+(s.durationMin>0?" · "+s.durationMin+" min":"");
+}
+function render(){
+  const db = loadDB();
+  const ns = db.sims.length, nl = db.lectures.length;
+  const nq = db.sims.reduce((a,s)=>a+s.questions.length,0);
+  const nm = db.lectures.reduce((a,s)=>a+s.items.length,0);
+
+  const band = el("statband");
+  if(ns===0 && nl===0){
+    band.innerHTML = '<div class="empty" style="grid-column:1/-1">Content is being prepared. Please check back soon.</div>';
+  }else{
+    band.innerHTML =
+      '<div class="stat"><b>'+ns+'</b><span>Simulation'+(ns===1?"":"s")+'</span></div>'
+      + '<div class="stat"><b>'+nq+'</b><span>Question'+(nq===1?"":"s")+'</span></div>'
+      + '<div class="stat"><b>'+nl+'</b><span>Lecture section'+(nl===1?"":"s")+'</span></div>'
+      + '<div class="stat"><b>'+nm+'</b><span>Material'+(nm===1?"":"s")+'</span></div>';
+  }
+
+  const sg = el("simGrid");
+  if(!ns){
+    el("simSect").classList.add("hidden");
+  }else{
+    el("simSect").classList.remove("hidden");
+    sg.innerHTML = "";
+    db.sims.slice(0,3).forEach(s=>{
+      const d = document.createElement("div"); d.className = "scard";
+      d.innerHTML = '<div class="chead"><div><b>'+texToHtml(s.title)+'</b><div class="meta">'+simMeta(s)+'</div></div></div>'
+        + (s.desc ? '<p class="desc">'+texToHtml(s.desc)+'</p>' : '')
+        + '<div class="foot"><a class="btn small primary" href="simulation.html">'+icon("play")+'Start</a></div>';
+      sg.appendChild(d);
+    });
+  }
+
+  const lg = el("lecGrid");
+  if(!nl){
+    el("lecSect").classList.add("hidden");
+  }else{
+    el("lecSect").classList.remove("hidden");
+    lg.innerHTML = "";
+    db.lectures.slice(0,3).forEach(s=>{
+      const d = document.createElement("div"); d.className = "scard";
+      d.innerHTML = '<div class="chead"><div><b>'+texToHtml(s.title)+'</b><div class="meta">'+s.items.length+' material'+(s.items.length===1?"":"s")+'</div></div></div>'
+        + (s.desc ? '<p class="desc">'+texToHtml(s.desc)+'</p>' : '')
+        + '<div class="foot"><a class="btn small primary" href="lecture.html">'+icon("book")+'Open</a></div>';
+      lg.appendChild(d);
+    });
+  }
+}
+
+function init(){
+  /* hidden admin access: click the hero mark three times quickly */
+  let clicks = [];
+  wire("gate","click",()=>{
+    const now = Date.now();
+    clicks = clicks.filter(t=>now-t<1200);
+    clicks.push(now);
+    if(clicks.length>=3){ window.location.href = "admin.html"; }
+  });
+
+  render();
+  window.addEventListener("storage", e=>{
+    if(e.key!==DATA_KEY && e.key!==null) return;
+    render();
+  });
+  document.addEventListener("visibilitychange", ()=>{
+    if(!document.hidden) render();
+  });
+}
+if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); }
+else{ init(); }
+</script>
+</body>
+</html>
