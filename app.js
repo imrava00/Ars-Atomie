@@ -1,6 +1,7 @@
-/* Ars Atomie shared code. Loaded by index, admin, simulation and lecture pages. */
+/* Ars Atomie shared code. Static GitHub Pages edition.
+   Content for visitors comes from data.js (window.ARS_SEED), re-read on every load.
+   The admin edits a working copy in localStorage and publishes it via Export for GitHub. */
 
-/* theme is applied before anything renders, so there is no flash */
 (function theme(){
   const KEY = "ars_theme";
   function current(){
@@ -11,7 +12,6 @@
   document.documentElement.dataset.theme = current();
 })();
 
-/* global error trap: a script problem is always shown on the page, never a silent blank */
 (function errtrap(){
   function show(msg){
     try{
@@ -28,7 +28,7 @@
     }catch(e){}
   }
   window.addEventListener("error", function(ev){
-    show("Script error on this page: " + (ev && ev.message ? ev.message : "unknown")
+    show("Script error: " + (ev && ev.message ? ev.message : "unknown")
       + (ev && ev.filename ? "\nFile: " + ev.filename + " line " + ev.lineno : ""));
   });
   window.addEventListener("unhandledrejection", function(ev){
@@ -36,7 +36,6 @@
   });
 })();
 
-/* inject the icon sprite, base styles, theme toggle and data doctor */
 (function inject(){
   const SPRITE = '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">'
     + '<symbol id="i-logo" viewBox="0 0 24 24">'
@@ -47,11 +46,8 @@
     + '<ellipse cx="12" cy="12" rx="9.4" ry="3.8" transform="rotate(-60 12 12)"/>'
     + '</g>'
     + '<g fill="currentColor" stroke="none">'
-    + '<circle cx="21.4" cy="12" r="1.45"/>'
-    + '<circle cx="7.3" cy="3.85" r="1.45"/>'
-    + '<circle cx="7.3" cy="20.15" r="1.45"/>'
-    + '</g>'
-    + '</symbol>'
+    + '<circle cx="21.4" cy="12" r="1.45"/><circle cx="7.3" cy="3.85" r="1.45"/><circle cx="7.3" cy="20.15" r="1.45"/>'
+    + '</g></symbol>'
     + '<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>'
     + '<symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></symbol>'
     + '<symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>'
@@ -66,6 +62,7 @@
     + '<symbol id="i-chev-r" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>'
     + '<symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>'
     + '<symbol id="i-check-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8 12.5 11 15.5 16 9.5"/></symbol>'
+    + '<symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>'
     + '<symbol id="i-x-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></symbol>'
     + '<symbol id="i-key" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></symbol>'
     + '<symbol id="i-rotate" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></symbol>'
@@ -86,33 +83,24 @@
 
   const BASE_CSS = [
     '*,*::before,*::after{box-sizing:border-box}',
-
-    /* ---------- light theme: pure black on white ---------- */
     ':root{--bg:#fafafa;--surface:#ffffff;--border:#e5e5e5;--ink:#0a0a0a;--muted:#6f6f6f;',
     '--primary:#0a0a0a;--primary-hover:#262626;--btn-ink:#ffffff;--primary-soft:#f4f4f5;',
-    '--soft:#fafafa;--track:#f0f0f0;--hoverb:#d4d4d4;--doneb:#d4d4d4;--timerb:#d4d4d4;',
+    '--soft:#fafafa;--track:#f0f0f0;--hoverb:#d4d4d4;--timerb:#d4d4d4;',
     '--hbg1:#f5f5f5;--hbg2:#f0f0f0;',
-    '--ok:#0a0a0a;--ok-soft:#f4f4f5;--bad:#171717;--bad-soft:#f4f4f5;',
     '--headbg:rgba(255,255,255,.85);--overlay:rgba(0,0,0,.55);',
-    '--radius:14px;',
-    '--shadow:0 1px 2px rgba(0,0,0,.04)}',
+    '--radius:14px;--shadow:0 1px 2px rgba(0,0,0,.04)}',
     'html{color-scheme:light}',
-
-    /* ---------- dark theme: pure white on black ---------- */
     'html[data-theme="dark"]{--bg:#0a0a0a;--surface:#141414;--border:#262626;--ink:#fafafa;--muted:#a3a3a3;',
     '--primary:#fafafa;--primary-hover:#d4d4d4;--btn-ink:#0a0a0a;--primary-soft:#1f1f1f;',
-    '--soft:#0f0f0f;--track:#1f1f1f;--hoverb:#404040;--doneb:#333333;--timerb:#333333;',
+    '--soft:#0f0f0f;--track:#1f1f1f;--hoverb:#404040;--timerb:#333333;',
     '--hbg1:#1a1a1a;--hbg2:#1f1f1f;',
-    '--ok:#fafafa;--ok-soft:#1f1f1f;--bad:#d4d4d4;--bad-soft:#1f1f1f;',
     '--headbg:rgba(10,10,10,.85);--overlay:rgba(0,0,0,.7);',
     '--shadow:0 1px 2px rgba(0,0,0,.4)}',
-
     'body{margin:0;color:var(--ink);background:var(--bg);min-height:100vh;overflow-wrap:break-word;',
     "font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}",
     'img{max-width:100%}',
     'header,main,footer{position:relative;z-index:1}',
     '.hidden{display:none!important}',
-
     'header{position:sticky;top:0;z-index:20;background:var(--headbg);backdrop-filter:blur(8px);',
     'border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:10px 20px}',
     '.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}',
@@ -123,20 +111,17 @@
     '.navlink{font-size:14px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 14px;border-radius:99px;transition:.15s}',
     '.navlink:hover{background:var(--hbg2);color:var(--ink)}',
     '.navlink.cur{background:var(--primary);color:var(--btn-ink)}',
-
-    /* the plain SVG mark: inverted tile, monochrome */
     '.mark{width:36px;height:36px;border-radius:10px;background:var(--primary);color:var(--btn-ink);',
     'display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}',
     '.mark .ic{width:21px;height:21px;stroke-width:1.7}',
     '.mark.big{width:88px;height:88px;border-radius:22px}',
     '.mark.big .ic{width:50px;height:50px;stroke-width:1.25}',
-
     '.btn{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);',
     'border-radius:9px;padding:9px 15px;font-size:14px;font-weight:600;color:var(--ink);font-family:inherit;',
     'cursor:pointer;text-decoration:none;transition:.15s}',
     '.btn:hover{border-color:var(--ink);transform:translateY(-1px)}',
     '.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--btn-ink)}',
-    '.btn.primary:hover{background:var(--primary-hover);border-color:var(--primary-hover);transform:translateY(-1px)}',
+    '.btn.primary:hover{background:var(--primary-hover);border-color:var(--primary-hover)}',
     '.btn.danger{color:var(--ink)}',
     '.btn.danger:hover{border-color:var(--ink);background:var(--hbg1)}',
     '.btn.small{padding:5px 10px;font-size:13px;border-radius:8px}',
@@ -145,7 +130,6 @@
     'background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;flex-shrink:0}',
     '.themebtn:hover{color:var(--ink);border-color:var(--ink)}',
     '.themebtn .ic{width:17px;height:17px}',
-
     '.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;',
     'margin-bottom:16px;box-shadow:var(--shadow)}',
     'input[type=text],input[type=number],input[type=password],textarea{width:100%;padding:10px 12px;',
@@ -161,18 +145,12 @@
     'code{background:var(--primary-soft);color:var(--ink);padding:1px 6px;border-radius:5px;font-size:12.5px}',
     'svg.ic{width:16px;height:16px;flex-shrink:0;display:inline-block;vertical-align:middle;fill:none;',
     'stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}',
-    'svg.ic-lg{width:44px;height:44px;display:inline-block;fill:none;stroke:currentColor;stroke-width:1.7;',
-    'stroke-linecap:round;stroke-linejoin:round}',
     '.katex-display{overflow-x:auto;overflow-y:hidden;margin:6px 0}',
-
-    /* monochrome tiles: all former color classes map to the same neutral chip */
     '.tile{width:42px;height:42px;border-radius:10px;background:var(--primary-soft);color:var(--ink);',
     'display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border)}',
     '.tile .ic{width:19px;height:19px}',
-    '.tile.indigo,.tile.teal,.tile.amber,.tile.violet{background:var(--primary-soft);color:var(--ink)}',
     '.pill{font-size:12px;font-weight:700;border-radius:99px;padding:3px 10px;white-space:nowrap;',
     'background:var(--primary-soft);color:var(--ink);border:1px solid var(--border)}',
-    '.pill.teal,.pill.indigo{background:var(--primary-soft);color:var(--ink)}',
     '.empty{border:1.5px dashed var(--border);border-radius:12px;padding:26px 18px;text-align:center;',
     'color:var(--muted);font-size:13.5px;line-height:1.65}',
     '.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;align-items:stretch}',
@@ -190,73 +168,50 @@
     'border-radius:10px;padding:11px 13px;font-size:13px;margin:0 0 14px;color:var(--muted)}',
     '.qitem{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border);border-radius:12px;',
     'padding:12px 14px;margin-bottom:9px;background:var(--soft);flex-wrap:wrap}',
-
-    /* data doctor modal */
     '.docmodal{position:fixed;inset:0;background:var(--overlay);z-index:70;display:flex;',
     'align-items:flex-start;justify-content:center;padding:6vh 16px}',
     '.docpanel{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;',
     'max-width:560px;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden}',
-    '.dochead{display:flex;justify-content:space-between;align-items:center;gap:10px;',
-    'padding:14px 18px;border-bottom:1px solid var(--border)}',
-    '.docrow{display:flex;justify-content:space-between;gap:12px;padding:9px 18px;font-size:13.5px;',
-    'border-bottom:1px solid var(--border);flex-wrap:wrap}',
+    '.dochead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}',
+    '.docrow{display:flex;justify-content:space-between;gap:12px;padding:9px 18px;font-size:13.5px;border-bottom:1px solid var(--border);flex-wrap:wrap}',
     '.docadvice{padding:13px 18px;font-size:13px;color:var(--muted);line-height:1.65}',
     '.docadvice b{color:var(--ink)}'
   ].join("");
 
   function h(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-  /* ---------- data status doctor ---------- */
   function openDoctor(){
     let m = document.getElementById("ars_doctor");
     if(!m){
       m = document.createElement("div");
       m.className = "docmodal"; m.id = "ars_doctor";
       m.innerHTML = '<div class="docpanel"><div class="dochead"><b>Data status</b>'
-        + '<span class="row" style="gap:8px">'
-        + '<button type="button" class="btn small" data-docfix>Repair data</button>'
-        + '<button type="button" class="btn small" data-docclose><svg class="ic"><use href="#i-x"/></svg>Close</button></span></div>'
+        + '<button type="button" class="btn small" data-docclose><svg class="ic"><use href="#i-x"/></svg>Close</button></div>'
         + '<div data-docrows></div><div class="docadvice" data-docadvice></div></div>';
       document.body.appendChild(m);
       m.addEventListener("click", e=>{ if(e.target===m) m.classList.add("hidden"); });
       m.querySelector("[data-docclose]").onclick = ()=>m.classList.add("hidden");
-      m.querySelector("[data-docfix]").onclick = ()=>{
-        const ok = ARS.repair();
-        fill(m);
-        m.querySelector("[data-docfix]").textContent = ok ? "Repaired" : "Repair failed";
-        setTimeout(()=>{ const b=m.querySelector("[data-docfix]"); if(b) b.textContent="Repair data"; }, 1600);
-      };
       document.addEventListener("keydown", e=>{ if(e.key==="Escape") m.classList.add("hidden"); });
     }
-    fill(m);
-    m.classList.remove("hidden");
-  }
-  function fill(m){
-    const st = ARS.storageStatus();
+    const st = ARS.status();
     const row = (k,v)=>'<div class="docrow"><span class="muted">'+k+'</span><b>'+v+'</b></div>';
-    const addr = st.isFile ? "local file (file://)" : h(st.origin);
     m.querySelector("[data-docrows]").innerHTML =
-      row("Page address", addr)
-      + row("Browser storage", st.supported ? "Available" : "Blocked by the browser")
-      + row("Saved Ars Atomie data", st.corrupt ? "Found but unreadable" : (st.hasKey ? "Found" : "Not found (empty)"))
-      + row("Simulations / questions", st.sims+" / "+st.questions)
-      + row("Lecture sections / materials", st.lectures+" / "+st.materials)
-      + row("Student attempts", st.attempts)
-      + row("Drive folder link", st.driveUrl ? "Set" : "Not set");
+      row("Site mode", st.published ? "Published live site" : "Local editing")
+      + row("data.js found", st.hasSeed ? "Yes" : "No")
+      + row("Content shown to visitors", st.sims+" simulations · "+st.questions+" questions · "+st.lectures+" sections · "+st.materials+" materials")
+      + row("Your working copy (editable)", st.workSims+" simulations · "+st.workLectures+" sections")
+      + row("Attempts in this browser", st.attempts);
     let advice;
-    if(!st.supported){
-      advice = "This browser is blocking local storage for this page. Serve the folder with a tiny local server or host it online, then try again.";
-    }else if(st.corrupt){
-      advice = "Saved data exists but could not be read. Click <b>Repair data</b> above. If that does not help, re import a good backup in the admin page, or recreate the content.";
-    }else if(!st.hasKey){
-      advice = "<b>This page sees an empty database.</b> If the site is hosted and you published a data.js file, it will be loaded on the next full reload. If your content shows in the admin page, the two pages are not sharing storage: open every page in this same browser.";
-    }else if(st.sims===0 && st.lectures===0){
-      advice = "The database here contains no content yet. On a hosted site with a published data.js, reload once. Locally, log in to the admin page and create content. Click <b>Repair data</b> if you believe content is missing.";
+    if(st.published){
+      advice = st.hasSeed
+        ? "Visitors see exactly what is inside data.js, reloaded fresh on every visit. To change content: open admin, edit (or press Load published into editor first), click Export for GitHub, and upload the downloaded data.js to your repository."
+        : "No data.js was found in the repository, so visitors see an empty site. In admin, click Export for GitHub and upload the file next to index.html.";
+      advice += " Attempts are saved in each student's own browser only.";
     }else{
-      advice = "Data is readable on this page. If something is still missing, click Refresh or reload the page.";
+      advice = "You are in local editing mode. Build your content here, then click Export for GitHub and upload the data.js file to your repository so students can see it.";
     }
-    advice += "<br><br><b>Remember:</b> locally, this data lives only in this browser. On a hosted site, published content arrives via data.js, while attempts stay in each student's own browser.";
     m.querySelector("[data-docadvice]").innerHTML = advice;
+    m.classList.remove("hidden");
   }
 
   function place(){
@@ -270,12 +225,9 @@
     style.textContent = BASE_CSS;
     document.head.appendChild(style);
 
-    /* theme toggle */
     const KEY = "ars_theme";
     const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "themebtn";
-    btn.title = "Switch theme";
+    btn.type = "button"; btn.className = "themebtn"; btn.title = "Switch theme";
     const setIcon = ()=>{
       const dark = document.documentElement.dataset.theme==="dark";
       btn.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-'+(dark?"sun":"moon")+'"/></svg>';
@@ -288,11 +240,8 @@
     };
     setIcon();
 
-    /* data status doctor */
     const docBtn = document.createElement("button");
-    docBtn.type = "button";
-    docBtn.className = "themebtn";
-    docBtn.title = "Data status";
+    docBtn.type = "button"; docBtn.className = "themebtn"; docBtn.title = "Data status";
     docBtn.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>';
     docBtn.onclick = openDoctor;
 
@@ -313,8 +262,9 @@
 })();
 
 const ARS = (function(){
-  const DB_KEY = "ars_atomie_v2";
-  const OLD_KEY = "olympiad_sim_v1";
+  const WORK_KEY = "ars_work_v1";
+  const OLD_KEY = "ars_atomie_v2";
+  const ATT_KEY = "ars_attempts_v1";
 
   const el = id => document.getElementById(id);
   function esc(s){ return (s||"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -351,88 +301,122 @@ const ARS = (function(){
     return html + plain(src.slice(last));
   }
 
-  /* strict repair: every field is validated, junk is dropped, nothing can crash a renderer */
-  function norm(db){
-    if(!db || typeof db!=="object") db = {};
-    db.sims = Array.isArray(db.sims) ? db.sims.filter(s=>s && typeof s==="object") : [];
-    db.lectures = Array.isArray(db.lectures) ? db.lectures.filter(s=>s && typeof s==="object") : [];
-    db.attempts = Array.isArray(db.attempts) ? db.attempts : [];
-    db.driveUrl = (typeof db.driveUrl==="string") ? db.driveUrl : "";
-    db.sims.forEach(s=>{
-      if(!Array.isArray(s.questions)) s.questions = [];
-      s.title = (typeof s.title==="string") ? s.title : "Untitled simulation";
-    });
-    db.lectures.forEach(s=>{
-      if(!Array.isArray(s.items)) s.items = [];
-      s.title = (typeof s.title==="string") ? s.title : "Untitled section";
-    });
-    return db;
+  function normAll(o){
+    o = (o && typeof o==="object") ? o : {};
+    const sims = (Array.isArray(o.sims)?o.sims:[]).filter(s=>s&&typeof s==="object").map(s=>({
+      id: s.id || Date.now(),
+      title: (typeof s.title==="string" && s.title) ? s.title : "Untitled simulation",
+      desc: (typeof s.desc==="string") ? s.desc : "",
+      durationMin: Math.max(0, parseInt(s.durationMin)||0),
+      questions: Array.isArray(s.questions) ? s.questions.filter(q=>q&&typeof q==="object") : []
+    }));
+    const lectures = (Array.isArray(o.lectures)?o.lectures:[]).filter(s=>s&&typeof s==="object").map(s=>({
+      id: s.id || Date.now(),
+      title: (typeof s.title==="string" && s.title) ? s.title : "Untitled section",
+      desc: (typeof s.desc==="string") ? s.desc : "",
+      items: Array.isArray(s.items) ? s.items.filter(it=>it&&typeof it==="object") : []
+    }));
+    return { sims, lectures, driveUrl:(typeof o.driveUrl==="string")?o.driveUrl:"" };
   }
-  function loadDB(){
-    try{
-      const d = JSON.parse(localStorage.getItem(DB_KEY));
-      if(d && Array.isArray(d.sims)) return norm(d);
-    }catch(e){}
-    /* published content baked into the site via data.js */
-    if(window.ARS_SEED && Array.isArray(window.ARS_SEED.sims)){
-      const seeded = norm({
-        sims: window.ARS_SEED.sims,
-        lectures: window.ARS_SEED.lectures || [],
-        attempts: [],
-        driveUrl: window.ARS_SEED.driveUrl || ""
-      });
-      if(seeded.sims.length || seeded.lectures.length){
-        saveDB(seeded);
-        return seeded;
-      }
-    }
+
+  function isPublished(){
+    if(location.protocol.indexOf("http")!==0) return false;
+    const h = location.hostname;
+    return h!=="localhost" && h!=="127.0.0.1";
+  }
+  function seed(){
+    return (window.ARS_SEED && typeof window.ARS_SEED==="object") ? normAll(window.ARS_SEED) : null;
+  }
+  function readWork(){
+    try{ return normAll(JSON.parse(localStorage.getItem(WORK_KEY))); }catch(e){ return normAll({}); }
+  }
+  function writeWork(c){
+    try{ localStorage.setItem(WORK_KEY, JSON.stringify(normAll(c))); return true; }
+    catch(e){ alert("Browser storage is full. Remove or shrink some pictures."); return false; }
+  }
+  function doMigrate(){
+    try{ if(localStorage.getItem("ars_migrated_v1")==="1") return; }catch(e){}
     try{
       const o = JSON.parse(localStorage.getItem(OLD_KEY));
-      if(o && Array.isArray(o.questions) && o.questions.length){
-        const db = norm({});
-        db.sims = [{ id:1, title:o.title||"Olympiad Simulation", desc:"",
-                     durationMin:o.durationMin||0, questions:o.questions }];
-        db.attempts = (o.attempts||[]).map(a=>({ simId:1, simTitle:db.sims[0].title, name:a.name,
-                     score:a.score, max:a.max, date:a.date, answers:a.answers||[] }));
-        saveDB(db);
-        return db;
+      if(o && typeof o==="object"){
+        let sims = Array.isArray(o.sims)?o.sims:[];
+        let lectures = Array.isArray(o.lectures)?o.lectures:[];
+        if(!sims.length && Array.isArray(o.questions) && o.questions.length){
+          sims = [{ id:1, title:o.title||"Olympiad Simulation", desc:"", durationMin:o.durationMin||0, questions:o.questions }];
+        }
+        const w = readWork();
+        if(!w.sims.length && !w.lectures.length && (sims.length||lectures.length)){
+          writeWork({ sims, lectures, driveUrl:o.driveUrl||"" });
+        }
+        let att = getAttempts();
+        if(!att.length && Array.isArray(o.attempts) && o.attempts.length){
+          try{ localStorage.setItem(ATT_KEY, JSON.stringify(o.attempts)); }catch(e){}
+        }
       }
     }catch(e){}
-    return norm({});
+    try{ localStorage.setItem("ars_migrated_v1","1"); }catch(e){}
   }
-  function saveDB(db){
-    try{ localStorage.setItem(DB_KEY, JSON.stringify(norm(db))); return true; }
-    catch(e){
-      alert("Storage is full. Use smaller pictures, and share large lecture documents with a Drive link.");
-      return false;
-    }
+
+  /* content visitors see: on the published site always data.js (fresh every load);
+     locally the working copy, falling back to a data.js in the same folder */
+  function getContent(){
+    const s = seed();
+    if(isPublished()) return s || normAll({});
+    doMigrate();
+    const w = readWork();
+    if(w.sims.length || w.lectures.length) return w;
+    return s || w;
   }
-  function repair(){
-    try{ return saveDB(loadDB()); }catch(e){ return false; }
+  function mode(){ return isPublished() ? "published" : "local"; }
+  function getWorking(){ doMigrate(); return readWork(); }
+  function saveWorking(mut){
+    const c = readWork(); mut(c); return writeWork(c);
   }
-  function storageStatus(){
-    let raw = null, supported = true;
-    try{ raw = localStorage.getItem(DB_KEY); }catch(e){ supported = false; }
-    let parsed = null, corrupt = false;
-    if(raw){
-      try{ parsed = JSON.parse(raw); }catch(e){ corrupt = true; }
-    }
-    let d = null;
-    if(parsed && !corrupt){ try{ d = norm(parsed); }catch(e){ d = null; } }
+  function loadPublishedIntoEditor(){
+    const s = seed();
+    if(!s) return false;
+    return writeWork(s);
+  }
+
+  function getAttempts(){
+    try{ const a = JSON.parse(localStorage.getItem(ATT_KEY)); return Array.isArray(a)?a:[]; }
+    catch(e){ return []; }
+  }
+  function saveAttempt(a){
+    const list = getAttempts();
+    list.push({ simId:a.simId, simTitle:a.simTitle||"", name:a.name||"Anonymous",
+      score:a.score||0, max:a.max||0, date:a.date||new Date().toISOString(),
+      answers:Array.isArray(a.answers)?a.answers:[] });
+    try{ localStorage.setItem(ATT_KEY, JSON.stringify(list)); return true; }
+    catch(e){ alert("This device's storage is full. Your score is shown but may not be saved."); return false; }
+  }
+  function deleteAttemptsWhere(pred){
+    const list = getAttempts().filter(x=>!pred(x));
+    try{ localStorage.setItem(ATT_KEY, JSON.stringify(list)); }catch(e){}
+  }
+  function clearAttemptsWhere(pred){
+    let list = getAttempts();
+    if(pred) list = list.filter(x=>!pred(x)); else list = [];
+    try{ localStorage.setItem(ATT_KEY, JSON.stringify(list)); }catch(e){}
+  }
+
+  function buildDataJS(){
+    const w = getWorking();
+    return "/* Ars Atomie published content. Re upload this file to GitHub to update the live site. */\n"
+      + "window.ARS_SEED = " + JSON.stringify({ sims:w.sims, lectures:w.lectures, driveUrl:w.driveUrl||"" }, null, 2) + ";\n";
+  }
+
+  function status(){
+    const c = getContent(), w = getWorking(), s = seed();
     return {
-      supported, hasKey: !!raw, corrupt,
-      origin: location.origin || "file://",
-      isFile: location.protocol === "file:",
-      sims: d ? d.sims.length : 0,
-      questions: d ? d.sims.reduce((a,s)=>a+s.questions.length,0) : 0,
-      lectures: d ? d.lectures.length : 0,
-      materials: d ? d.lectures.reduce((a,s)=>a+s.items.length,0) : 0,
-      attempts: d ? d.attempts.length : 0,
-      driveUrl: d ? d.driveUrl : ""
+      published: isPublished(), hasSeed: !!s,
+      sims:c.sims.length, questions:c.sims.reduce((a,x)=>a+x.questions.length,0),
+      lectures:c.lectures.length, materials:c.lectures.reduce((a,x)=>a+x.items.length,0),
+      workSims:w.sims.length, workLectures:w.lectures.length,
+      attempts:getAttempts().length
     };
   }
 
-  /* favicon: the atom mark, white on black */
   (function favicon(){
     function apply(){
       const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
@@ -444,9 +428,7 @@ const ARS = (function(){
         + '<ellipse cx="32" cy="32" rx="20.5" ry="8.2" transform="rotate(-60 32 32)"/>'
         + '</g>'
         + '<g fill="#fafafa">'
-        + '<circle cx="52.5" cy="32" r="3"/>'
-        + '<circle cx="21.75" cy="14.25" r="3"/>'
-        + '<circle cx="21.75" cy="49.75" r="3"/>'
+        + '<circle cx="52.5" cy="32" r="3"/><circle cx="21.75" cy="14.25" r="3"/><circle cx="21.75" cy="49.75" r="3"/>'
         + '</g></svg>';
       const f = document.createElement("link");
       f.rel = "icon"; f.type = "image/svg+xml";
@@ -457,5 +439,8 @@ const ARS = (function(){
     else{ apply(); }
   })();
 
-  return { el, esc, wire, icon, texToHtml, loadDB, saveDB, storageStatus, repair };
+  return { el, esc, wire, icon, texToHtml,
+    getContent, mode, getWorking, saveWorking, loadPublishedIntoEditor, seed,
+    getAttempts, saveAttempt, deleteAttemptsWhere, clearAttemptsWhere,
+    buildDataJS, status };
 })();
